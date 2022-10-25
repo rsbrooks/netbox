@@ -362,6 +362,13 @@ class ObjectEditView(GetReturnURLMixin, BaseObjectView):
             **self.get_extra_context(request, obj),
         })
 
+    def save_related_data(self, request, form, objd):
+        """
+        Optionally override to save model specific related data after the form is saved.
+        Raise exception (PermissionsViolation) or such if error.
+        """
+        return
+
     def post(self, request, *args, **kwargs):
         """
         POST request handler.
@@ -371,6 +378,7 @@ class ObjectEditView(GetReturnURLMixin, BaseObjectView):
         """
         logger = logging.getLogger('netbox.views.ObjectEditView')
         obj = self.get_object(**kwargs)
+        object_created = False
 
         # Take a snapshot for change logging (if editing an existing object)
         if obj.pk and hasattr(obj, 'snapshot'):
@@ -388,6 +396,8 @@ class ObjectEditView(GetReturnURLMixin, BaseObjectView):
                 with transaction.atomic():
                     object_created = form.instance.pk is None
                     obj = form.save()
+
+                    self.save_related_data(request, form, obj)
 
                     # Check that the new object conforms with any assigned object-level permissions
                     if not self.queryset.filter(pk=obj.pk).exists():
@@ -425,6 +435,8 @@ class ObjectEditView(GetReturnURLMixin, BaseObjectView):
                 logger.debug(e.message)
                 form.add_error(None, e.message)
                 clear_webhooks.send(sender=self)
+                if object_created and obj:
+                    obj.pk = None
 
         else:
             logger.debug("Form validation failed")

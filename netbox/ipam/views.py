@@ -11,6 +11,7 @@ from dcim.models import Interface, Site, Device
 from dcim.tables import SiteTable
 from netbox.views import generic
 from utilities.utils import count_related
+from utilities.exceptions import PermissionsViolation
 from virtualization.filtersets import VMInterfaceFilterSet
 from virtualization.models import VMInterface, VirtualMachine
 from . import filtersets, forms, tables
@@ -929,6 +930,20 @@ class FHRPGroupEditView(generic.ObjectEditView):
             return_url += f'&group={obj.pk}'
 
         return return_url
+
+    def save_related_data(self, request, form, obj):
+        ipaddress = IPAddress(
+            vrf=form.cleaned_data['ip_vrf'],
+            address=form.cleaned_data['ip_address'],
+            status=form.cleaned_data['ip_status'],
+            role=FHRP_PROTOCOL_ROLE_MAPPINGS.get(form.cleaned_data['protocol'], IPAddressRoleChoices.ROLE_VIP),
+            assigned_object=obj
+        )
+        ipaddress.save()
+
+        # Check that the new IPAddress conforms with any assigned object-level permissions
+        if not IPAddress.objects.restrict(request.user, 'add').filter(pk=ipaddress.pk).first():
+            raise PermissionsViolation()
 
 
 class FHRPGroupDeleteView(generic.ObjectDeleteView):

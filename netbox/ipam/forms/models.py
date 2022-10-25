@@ -550,26 +550,6 @@ class FHRPGroupForm(NetBoxModelForm):
             'protocol', 'group_id', 'auth_type', 'auth_key', 'description', 'ip_vrf', 'ip_address', 'ip_status', 'tags',
         )
 
-    def save(self, *args, **kwargs):
-        instance = super().save(*args, **kwargs)
-
-        # Check if we need to create a new IPAddress for the group
-        if self.cleaned_data.get('ip_address'):
-            ipaddress = IPAddress(
-                vrf=self.cleaned_data['ip_vrf'],
-                address=self.cleaned_data['ip_address'],
-                status=self.cleaned_data['ip_status'],
-                role=FHRP_PROTOCOL_ROLE_MAPPINGS.get(self.cleaned_data['protocol'], IPAddressRoleChoices.ROLE_VIP),
-                assigned_object=instance
-            )
-            ipaddress.save()
-
-            # Check that the new IPAddress conforms with any assigned object-level permissions
-            if not IPAddress.objects.filter(pk=ipaddress.pk).first():
-                raise PermissionsViolation()
-
-        return instance
-
     def clean(self):
         super().clean()
 
