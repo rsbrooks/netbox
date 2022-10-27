@@ -198,7 +198,7 @@ class CustomField(CloningMixin, ExportTemplatesMixin, WebhooksMixin, ChangeLogge
             instances = model.objects.exclude(**{f'custom_field_data__contains': self.name})
             for instance in instances:
                 instance.custom_field_data[self.name] = self.default
-            model.objects.bulk_update(instances, ['custom_field_data'], batch_size=100)
+                instance.save()
 
     def remove_stale_data(self, content_types):
         """
@@ -210,7 +210,7 @@ class CustomField(CloningMixin, ExportTemplatesMixin, WebhooksMixin, ChangeLogge
             instances = model.objects.filter(**{f'custom_field_data__{self.name}__isnull': False})
             for instance in instances:
                 del instance.custom_field_data[self.name]
-            model.objects.bulk_update(instances, ['custom_field_data'], batch_size=100)
+                instance.save()
 
     def rename_object_data(self, old_name, new_name):
         """
@@ -222,7 +222,7 @@ class CustomField(CloningMixin, ExportTemplatesMixin, WebhooksMixin, ChangeLogge
             instances = model.objects.filter(**params)
             for instance in instances:
                 instance.custom_field_data[new_name] = instance.custom_field_data.pop(old_name)
-            model.objects.bulk_update(instances, ['custom_field_data'], batch_size=100)
+                instance.save()
 
     def clean(self):
         super().clean()
