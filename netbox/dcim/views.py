@@ -3561,3 +3561,66 @@ class PowerFeedBulkDeleteView(generic.BulkDeleteView):
 
 # Trace view
 register_model_view(PowerFeed, 'trace', kwargs={'model': PowerFeed})(PathTraceView)
+
+
+# VDC
+class VirtualDeviceContextListView(generic.ObjectListView):
+    queryset = VirtualDeviceContext.objects.all()
+    filterset = filtersets.VirtualDeviceContextFilterSet
+    filterset_form = forms.VirtualDeviceContextFilterForm
+    table = tables.VirtualDeviceContextTable
+
+
+class VirtualDeviceContextView(generic.ObjectView):
+    queryset = VirtualDeviceContext.objects.all()
+
+    def get_extra_context(self, request, instance):
+        interfaces_table = tables.InterfaceTable(instance.interfaces, user=request.user)
+        interfaces_table.configure(request)
+
+        return {
+            'interfaces_table': interfaces_table,
+            'interface_count': instance.interfaces.count(),
+        }
+
+
+class VirtualDeviceContextEditView(generic.ObjectEditView):
+    queryset = VirtualDeviceContext.objects.all()
+    form = forms.VirtualDeviceContextForm
+
+
+class VirtualDeviceContextDeleteView(generic.ObjectDeleteView):
+    queryset = VirtualDeviceContext.objects.all()
+
+
+class VirtualDeviceContextBulkImportView(generic.BulkImportView):
+    queryset = VirtualDeviceContext.objects.all()
+    model_form = forms.VirtualDeviceContextCSVForm
+    table = tables.VirtualDeviceContextTable
+
+
+class VirtualDeviceContextBulkRenameView(generic.BulkRenameView):
+    queryset = VirtualDeviceContext.objects.all()
+    filterset = filtersets.VirtualDeviceContextFilterSet
+    table = tables.VirtualDeviceContextTable
+class VirtualDeviceContextBulkEditView(generic.BulkEditView):
+    queryset = VirtualDeviceContext.objects.all()
+    filterset = filtersets.VirtualDeviceContextFilterSet
+    table = tables.VirtualDeviceContextTable
+    form = forms.VirtualDeviceContextBulkEditForm
+
+
+class VirtualDeviceContextBulkDeleteView(generic.BulkDeleteView):
+    queryset = VirtualDeviceContext.objects.all()
+    filterset = filtersets.VirtualDeviceContextFilterSet
+    table = tables.VirtualDeviceContextTable
+
+
+class VirtualDeviceContextInterfacesView(DeviceComponentsView):
+    queryset = VirtualDeviceContext.objects.all()
+    child_model = Interface
+    table = tables.DeviceInterfaceTable
+    filterset = filtersets.InterfaceFilterSet
+
+    def get_children(self, request, parent):
+        return self.child_model.objects.restrict(request.user, 'view').filter(vdcs=parent)

@@ -183,6 +183,20 @@ urlpatterns = [
     path('devices/delete/', views.DeviceBulkDeleteView.as_view(), name='device_bulk_delete'),
     path('devices/<int:pk>/', include(get_model_urls('dcim', 'device'))),
 
+    # Virtual Device Context
+    path('vdcs/', views.VirtualDeviceContextListView.as_view(), name='virtualdevicecontext_list'),
+    path('vdcs/add/', views.VirtualDeviceContextEditView.as_view(), name='virtualdevicecontext_add'),
+    path('vdcs/import/', views.VirtualDeviceContextBulkImportView.as_view(), name='virtualdevicecontext_import'),
+    path('vdcs/edit/', views.VirtualDeviceContextBulkEditView.as_view(), name='virtualdevicecontext_bulk_edit'),
+    path('vdcs/rename/', views.VirtualDeviceContextBulkRenameView.as_view(), name='virtualdevicecontext_bulk_rename'),
+    path('vdcs/delete/', views.VirtualDeviceContextBulkDeleteView.as_view(), name='virtualdevicecontext_bulk_delete'),
+    path('vdcs/<int:pk>/', views.VirtualDeviceContextView.as_view(), name='virtualdevicecontext'),
+    path('vdcs/<int:pk>/edit/', views.VirtualDeviceContextEditView.as_view(), name='virtualdevicecontext_edit'),
+    path('vdcs/<int:pk>/delete/', views.VirtualDeviceContextDeleteView.as_view(), name='virtualdevicecontext_delete'),
+    path('vdcs/<int:pk>/interfaces/', views.VirtualDeviceContextInterfacesView.as_view(), name='virtualdevicecontext_interfaces'),
+    path('vdcs/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='virtualdevicecontext_changelog', kwargs={'model': VirtualDeviceContext}),
+    path('vdcs/<int:pk>/journal/', ObjectJournalView.as_view(), name='virtualdevicecontext_journal', kwargs={'model': VirtualDeviceContext}),
+
     # Modules
     path('modules/', views.ModuleListView.as_view(), name='module_list'),
     path('modules/add/', views.ModuleEditView.as_view(), name='module_add'),

@@ -50,6 +50,7 @@ __all__ = (
     'SiteFilterForm',
     'SiteGroupFilterForm',
     'VirtualChassisFilterForm',
+    'VirtualDeviceContextFilterForm'
 )
 
 
@@ -372,7 +373,7 @@ class DeviceTypeFilterForm(NetBoxModelFilterSetForm):
     model = DeviceType
     fieldsets = (
         (None, ('q', 'tag')),
-        ('Hardware', ('manufacturer_id', 'part_number', 'subdevice_role', 'airflow')),
+        ('Hardware', ('manufacturer_id', 'part_number', 'subdevice_role', 'airflow', 'vdc_type')),
         ('Images', ('has_front_image', 'has_rear_image')),
         ('Components', (
             'console_ports', 'console_server_ports', 'power_ports', 'power_outlets', 'interfaces',
@@ -394,6 +395,10 @@ class DeviceTypeFilterForm(NetBoxModelFilterSetForm):
     )
     airflow = MultipleChoiceField(
         choices=add_blank_choice(DeviceAirflowChoices),
+        required=False
+    )
+    vdc_type = MultipleChoiceField(
+        choices=add_blank_choice(VirtualDeviceContextTypeChoices),
         required=False
     )
     has_front_image = forms.NullBooleanField(
@@ -721,6 +726,37 @@ class DeviceFilterForm(
     pass_through_ports = forms.NullBooleanField(
         required=False,
         label='Has pass-through ports',
+        widget=StaticSelect(
+            choices=BOOLEAN_WITH_BLANK_CHOICES
+        )
+    )
+    tag = TagFilterField(model)
+
+
+class VirtualDeviceContextFilterForm(
+    TenancyFilterForm,
+    NetBoxModelFilterSetForm
+):
+    model = VirtualDeviceContext
+    fieldsets = (
+        (None, ('q', 'tag')),
+        ('Hardware', ('device',)),
+        ('Tenant', ('tenant_group_id', 'tenant_id')),
+        ('Miscellaneous', ('has_primary_ip',))
+    )
+    device = DynamicModelMultipleChoiceField(
+        queryset=Device.objects.all(),
+        required=False,
+        label=_('Device'),
+        fetch_trigger='open'
+    )
+    status = MultipleChoiceField(
+        required=False,
+        choices=add_blank_choice(VirtualDeviceContextStatusChoices)
+    )
+    has_primary_ip = forms.NullBooleanField(
+        required=False,
+        label='Has a primary IP',
         widget=StaticSelect(
             choices=BOOLEAN_WITH_BLANK_CHOICES
         )

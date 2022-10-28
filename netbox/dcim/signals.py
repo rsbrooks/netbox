@@ -1,10 +1,12 @@
 import logging
 
-from django.db.models.signals import post_save, post_delete, pre_delete
+from django import forms
+from django.db.models.signals import post_save, post_delete, pre_delete, m2m_changed
 from django.dispatch import receiver
 
-from .choices import CableEndChoices, LinkStatusChoices
-from .models import Cable, CablePath, CableTermination, Device, PathEndpoint, PowerPanel, Rack, Location, VirtualChassis
+from .choices import CableEndChoices, LinkStatusChoices, VirtualDeviceContextTypeChoices
+from .models import Cable, CablePath, CableTermination, Device, PathEndpoint, PowerPanel, Rack, Location, \
+    VirtualChassis, VirtualDeviceContext, Interface
 from .models.cables import trace_paths
 from .utils import create_cablepath, rebuild_paths
 
@@ -123,3 +125,15 @@ def nullify_connected_endpoints(instance, **kwargs):
 
     for cablepath in CablePath.objects.filter(_nodes__contains=instance.cable):
         cablepath.retrace()
+
+
+@receiver(m2m_changed, sender=Interface.vdc.through)
+def enforce_vdc_type_restrictions(instance, **kwargs):
+    if 'action' == 'post_add':
+        device = instance.device
+        if device.device_type.vdc_type not in [VirtualDeviceContextTypeChoices.CISCO_ASA_CONTEXT, VirtualDeviceContextTypeChoices.CISCO_FTD_INSTANCE] \
+                and len(instance.vdc) > 1:
+            print('Error')
+            raise forms.ValidationError({
+                'vdc': f"You cannot assign more then 1 VDC for {device.device_type}"
+            })

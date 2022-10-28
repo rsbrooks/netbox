@@ -65,6 +65,7 @@ __all__ = (
     'SiteFilterSet',
     'SiteGroupFilterSet',
     'VirtualChassisFilterSet',
+    'VirtualDeviceContextFilterSet',
 )
 
 
@@ -434,6 +435,9 @@ class DeviceTypeFilterSet(NetBoxModelFilterSet):
         to_field_name='slug',
         label='Manufacturer (slug)',
     )
+    vdc_type = django_filters.MultipleChoiceFilter(
+        choices=VirtualDeviceContextTypeChoices
+    )
     has_front_image = django_filters.BooleanFilter(
         label='Has a front image',
         method='_has_front_image'
@@ -482,7 +486,7 @@ class DeviceTypeFilterSet(NetBoxModelFilterSet):
     class Meta:
         model = DeviceType
         fields = [
-            'id', 'model', 'slug', 'part_number', 'u_height', 'is_full_depth', 'subdevice_role', 'airflow', 'weight', 'weight_unit'
+            'id', 'model', 'slug', 'part_number', 'u_height', 'is_full_depth', 'subdevice_role', 'airflow', 'weight', 'weight_unit', 'vdc_type',
         ]
 
     def search(self, queryset, name, value):
@@ -1007,6 +1011,30 @@ class DeviceFilterSet(NetBoxModelFilterSet, TenancyFilterSet, ContactModelFilter
 
     def _device_bays(self, queryset, name, value):
         return queryset.exclude(devicebays__isnull=value)
+
+
+class VirtualDeviceContextFilterSet(NetBoxModelFilterSet, TenancyFilterSet):
+    device_id = django_filters.ModelMultipleChoiceFilter(
+        field_name='device',
+        queryset=Device.objects.all(),
+        label='VDC (ID)',
+    )
+    device = django_filters.ModelMultipleChoiceFilter(
+        field_name='device',
+        queryset=Device.objects.all(),
+        label='Device model',
+    )
+    status = django_filters.MultipleChoiceFilter(
+        choices=VirtualDeviceContextStatusChoices
+    )
+    has_primary_ip = django_filters.BooleanFilter(
+        method='_has_primary_ip',
+        label='Has a primary IP',
+    )
+
+    class Meta:
+        model = VirtualDeviceContext
+        fields = ['id', 'device', 'name',]
 
 
 class ModuleFilterSet(NetBoxModelFilterSet):

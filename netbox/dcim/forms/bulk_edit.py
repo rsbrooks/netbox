@@ -54,6 +54,7 @@ __all__ = (
     'SiteBulkEditForm',
     'SiteGroupBulkEditForm',
     'VirtualChassisBulkEditForm',
+    'VirtualDeviceContextBulkEditForm'
 )
 
 
@@ -1325,3 +1326,20 @@ class InventoryItemRoleBulkEditForm(NetBoxModelBulkEditForm):
         (None, ('color', 'description')),
     )
     nullable_fields = ('color', 'description')
+
+
+class VirtualDeviceContextBulkEditForm(NetBoxModelBulkEditForm):
+    device = DynamicModelChoiceField(
+        queryset=Device.objects.all(),
+        required=False
+    )
+    status = forms.ChoiceField(
+        required=False,
+        choices=add_blank_choice(VirtualDeviceContextStatusChoices),
+        widget=StaticSelect()
+    )
+    model = VirtualDeviceContext
+    fieldsets = (
+        (None, ('device',)),
+    )
+    nullable_fields = ('device', )

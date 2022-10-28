@@ -34,6 +34,7 @@ __all__ = (
     'ModuleType',
     'Platform',
     'VirtualChassis',
+    'VirtualDeviceContext',
 )
 
 
@@ -123,6 +124,12 @@ class DeviceType(NetBoxModel, WeightMixin):
         help_text='Parent devices house child devices in device bays. Leave blank '
                   'if this device type is neither a parent nor a child.'
     )
+    vdc_type = models.CharField(
+        max_length=50,
+        blank=True,
+        choices=VirtualDeviceContextTypeChoices,
+        verbose_name='VDC Type'
+    )
     airflow = models.CharField(
         max_length=50,
         choices=DeviceAirflowChoices,
@@ -141,7 +148,7 @@ class DeviceType(NetBoxModel, WeightMixin):
     )
 
     clone_fields = (
-        'manufacturer', 'u_height', 'is_full_depth', 'subdevice_role', 'airflow', 'weight', 'weight_unit',
+        'manufacturer', 'u_height', 'is_full_depth', 'subdevice_role', 'airflow', 'weight', 'weight_unit', 'vdc_type'
     )
 
     class Meta:
@@ -1129,3 +1136,72 @@ class VirtualChassis(NetBoxModel):
             )
 
         return super().delete(*args, **kwargs)
+
+class VirtualDeviceContext(NetBoxModel):
+    device = models.ForeignKey(
+        to='Device',
+        on_delete=models.PROTECT,
+        related_name='vdcs',
+        blank=True,
+        null=True
+    )
+    name = models.CharField(
+        max_length=64
+    )
+    status = models.CharField(
+        max_length=50,
+        blank=True,
+        choices=VirtualDeviceContextStatusChoices,
+    )
+    identifier = models.PositiveSmallIntegerField(
+        blank=True,
+        null=True,
+        validators=[MaxValueValidator(255)]
+    )
+    primary_ip4 = models.OneToOneField(
+        to='ipam.IPAddress',
+        on_delete=models.SET_NULL,
+        related_name='+',
+        blank=True,
+        null=True,
+        verbose_name='Primary IPv4'
+    )
+    primary_ip6 = models.OneToOneField(
+        to='ipam.IPAddress',
+        on_delete=models.SET_NULL,
+        related_name='+',
+        blank=True,
+        null=True,
+        verbose_name='Primary IPv6'
+    )
+    tenant = models.ForeignKey(
+        to='tenancy.Tenant',
+        on_delete=models.PROTECT,
+        related_name='vdcs',
+        blank=True,
+        null=True
+    )
+    comments = models.TextField(
+        blank=True
+    )
+
+    class Meta:
+        ordering = ['name']
+        constraints = (
+            models.UniqueConstraint(
+                fields=('device', 'identifier',),
+                name='%(app_label)s_%(class)s_device_identifiers',
+                violation_error_message="A VDC with this identifier already exists on this device."
+            ),
+            models.UniqueConstraint(
+                fields=('device', 'name',),
+                name='%(app_label)s_%(class)s_name',
+                violation_error_message="A VDC with this name already exists on this device."
+            ),
+        )
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('dcim:virtualdevicecontext', kwargs={'pk': self.pk})

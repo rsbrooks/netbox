@@ -1399,3 +1399,74 @@ class PowerFeedPhaseChoices(ChoiceSet):
         (PHASE_SINGLE, 'Single phase'),
         (PHASE_3PHASE, 'Three-phase'),
     )
+
+
+#
+# VDC
+#
+class VirtualDeviceContextStatusChoices(ChoiceSet):
+    key = 'VirtualDeviceContext.status'
+
+    STATUS_PLANNED = 'planned'
+    STATUS_ACTIVE = 'active'
+    STATUS_OFFLINE = 'offline'
+
+    CHOICES = [
+        (STATUS_PLANNED, 'Planned', 'cyan'),
+        (STATUS_ACTIVE, 'Active', 'green'),
+        (STATUS_OFFLINE, 'Offline', 'red'),
+    ]
+
+
+class VirtualDeviceContextTypeChoices(ChoiceSet):
+
+    CISCO_NEXUS_VDC = 'cisco-nexus-vdc'
+    CISCO_ASA_CONTEXT = 'cisco-asa-context'
+    CISCO_FTD_INSTANCE = 'cisico-ftd-instance'
+    JUNIPER_VR = 'juniper-virtualrouter'
+    FORTINET_VDOM = 'fortinet-virtualdomain'
+    PALOALTO_VSYS = 'paloalto-virtualsystem'
+    CHECKPOINT_VSYS = 'checkpoint-virtualsystem'
+
+    OTHER_VIRTUALCONTEXT = 'other-virtualcontext'
+
+    CHOICES = (
+        (
+            'Cisco',
+            (
+                (CISCO_NEXUS_VDC, 'Nexus VDC'),
+                (CISCO_ASA_CONTEXT, 'ASA Context'),
+                (CISCO_FTD_INSTANCE, 'FTD Instance'),
+            )
+        ),
+        (
+            'Juniper',
+            (
+                (JUNIPER_VR, 'Virtual Router'),
+            )
+        ),
+        (
+            'Fortinet',
+            (
+                (FORTINET_VDOM, 'Virtual Domain'),
+            )
+        ),
+        (
+            'Palo Alto',
+            (
+                (PALOALTO_VSYS, 'Virtual System'),
+            )
+        ),
+        (
+            'Checkpoint',
+            (
+                (CHECKPOINT_VSYS, 'Virtual System'),
+            )
+        ),
+        (
+            'Other',
+            (
+                (OTHER_VIRTUALCONTEXT, 'Virtual Context'),
+            )
+        ),
+    )

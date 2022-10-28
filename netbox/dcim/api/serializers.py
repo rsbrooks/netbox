@@ -672,6 +672,22 @@ class DeviceSerializer(NetBoxModelSerializer):
         return data
 
 
+class VirtualDeviceContextSerializer(NetBoxModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='dcim-api:device-detail')
+    device = NestedDeviceSerializer()
+    tenant = NestedTenantSerializer(required=False, allow_null=True, default=None)
+    primary_ip = NestedIPAddressSerializer(read_only=True)
+    primary_ip4 = NestedIPAddressSerializer(required=False, allow_null=True)
+    primary_ip6 = NestedIPAddressSerializer(required=False, allow_null=True)
+
+    class Meta:
+        model = VirtualDeviceContext
+        fields = [
+            'id', 'url', 'display', 'name', 'device', 'tenant', 'primary_ip', 'primary_ip4', 'primary_ip6', 'comments',
+            'tags', 'custom_fields', 'created', 'last_updated',
+        ]
+
+
 class ModuleSerializer(NetBoxModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='dcim-api:module-detail')
     device = NestedDeviceSerializer()

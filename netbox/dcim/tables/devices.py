@@ -15,6 +15,7 @@ from dcim.models import (
     PowerPort,
     RearPort,
     VirtualChassis,
+    VirtualDeviceContext,
 )
 from django_tables2.utils import Accessor
 from tenancy.tables import ContactsColumnMixin, TenancyColumnsMixin
@@ -52,6 +53,7 @@ __all__ = (
     'PowerPortTable',
     'RearPortTable',
     'VirtualChassisTable',
+    'VirtualDeviceContextTable'
 )
 
 
@@ -896,3 +898,44 @@ class VirtualChassisTable(NetBoxTable):
         model = VirtualChassis
         fields = ('pk', 'id', 'name', 'domain', 'master', 'member_count', 'tags', 'created', 'last_updated',)
         default_columns = ('pk', 'name', 'domain', 'master', 'member_count')
+
+
+class VirtualDeviceContextTable(TenancyColumnsMixin, NetBoxTable):
+    name = tables.Column(
+        linkify=True
+    )
+    indentifier = tables.Column()
+    device = tables.TemplateColumn(
+        order_by=('_name',),
+        template_code=DEVICE_LINK
+    )
+    status = tables.Column()
+    primary_ip = tables.Column(
+        linkify=True,
+        order_by=('primary_ip4', 'primary_ip6'),
+        verbose_name='IP Address'
+    )
+    primary_ip4 = tables.Column(
+        linkify=True,
+        verbose_name='IPv4 Address'
+    )
+    primary_ip6 = tables.Column(
+        linkify=True,
+        verbose_name='IPv6 Address'
+    )
+
+    comments = columns.MarkdownColumn()
+
+    tags = columns.TagColumn(
+        url_name='dcim:vdc_list'
+    )
+
+    class Meta(NetBoxTable.Meta):
+        model = VirtualDeviceContext
+        fields = (
+            'pk', 'id', 'name', 'identifier', 'tenant', 'tenant_group',
+            'primary_ip', 'primary_ip4', 'primary_ip6', 'comments', 'tags', 'created', 'last_updated',
+        )
+        default_columns = (
+            'pk', 'name', 'identifier', 'tenant', 'primary_ip',
+        )
