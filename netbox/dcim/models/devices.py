@@ -1137,6 +1137,7 @@ class VirtualChassis(NetBoxModel):
 
         return super().delete(*args, **kwargs)
 
+
 class VirtualDeviceContext(NetBoxModel):
     device = models.ForeignKey(
         to='Device',

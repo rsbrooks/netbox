@@ -1034,7 +1034,7 @@ class VirtualDeviceContextFilterSet(NetBoxModelFilterSet, TenancyFilterSet):
 
     class Meta:
         model = VirtualDeviceContext
-        fields = ['id', 'device', 'name',]
+        fields = ['id', 'device', 'name', ]
 
 
 class ModuleFilterSet(NetBoxModelFilterSet):

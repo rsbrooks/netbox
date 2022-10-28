@@ -3606,12 +3606,13 @@ class VirtualDeviceContextBulkRenameView(generic.BulkRenameView):
     queryset = VirtualDeviceContext.objects.all()
     filterset = filtersets.VirtualDeviceContextFilterSet
     table = tables.VirtualDeviceContextTable
+
+
 class VirtualDeviceContextBulkEditView(generic.BulkEditView):
     queryset = VirtualDeviceContext.objects.all()
     filterset = filtersets.VirtualDeviceContextFilterSet
     table = tables.VirtualDeviceContextTable
     form = forms.VirtualDeviceContextBulkEditForm
-
 
 
 class VirtualDeviceContextBulkDeleteView(generic.BulkDeleteView):

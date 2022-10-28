@@ -397,7 +397,7 @@ class DeviceTypeForm(NetBoxModelForm):
         model = DeviceType
         fields = [
             'manufacturer', 'model', 'slug', 'part_number', 'u_height', 'is_full_depth', 'subdevice_role', 'airflow',
-            'vdc_type','vdc_type','weight', 'weight_unit', 'front_image', 'rear_image', 'comments', 'tags',
+            'vdc_type', 'vdc_type', 'weight', 'weight_unit', 'front_image', 'rear_image', 'comments', 'tags',
         ]
         widgets = {
             'airflow': StaticSelect(),
@@ -1650,7 +1650,6 @@ class InventoryItemRoleForm(NetBoxModelForm):
         ]
 
 
-
 class VirtualDeviceContextForm(TenancyForm, NetBoxModelForm):
     region = DynamicModelChoiceField(
         queryset=Region.objects.all(),
@@ -1701,12 +1700,12 @@ class VirtualDeviceContextForm(TenancyForm, NetBoxModelForm):
         }
     )
 
-
     fieldsets = (
         ('Device', ('region', 'site_group', 'site', 'location', 'rack', 'device')),
         ('Virtual Device Context', ('name', 'identifier', 'primary_ip4', 'primary_ip6', 'tenant_group', 'tenant')),
         (None, ('tags', ))
     )
+
     class Meta:
         model = VirtualDeviceContext
         fields = [
