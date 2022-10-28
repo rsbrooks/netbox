@@ -1206,3 +1206,14 @@ class VirtualDeviceContext(NetBoxModel):
 
     def get_absolute_url(self):
         return reverse('dcim:virtualdevicecontext', kwargs={'pk': self.pk})
+
+    @property
+    def primary_ip(self):
+        if ConfigItem('PREFER_IPV4')() and self.primary_ip4:
+            return self.primary_ip4
+        elif self.primary_ip6:
+            return self.primary_ip6
+        elif self.primary_ip4:
+            return self.primary_ip4
+        else:
+            return None
