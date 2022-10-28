@@ -3571,6 +3571,7 @@ class VirtualDeviceContextListView(generic.ObjectListView):
     table = tables.VirtualDeviceContextTable
 
 
+@register_model_view(VirtualDeviceContext)
 class VirtualDeviceContextView(generic.ObjectView):
     queryset = VirtualDeviceContext.objects.all()
 
@@ -3584,11 +3585,13 @@ class VirtualDeviceContextView(generic.ObjectView):
         }
 
 
+@register_model_view(VirtualDeviceContext, 'edit')
 class VirtualDeviceContextEditView(generic.ObjectEditView):
     queryset = VirtualDeviceContext.objects.all()
     form = forms.VirtualDeviceContextForm
 
 
+@register_model_view(VirtualDeviceContext, 'delete')
 class VirtualDeviceContextDeleteView(generic.ObjectDeleteView):
     queryset = VirtualDeviceContext.objects.all()
 
@@ -3610,17 +3613,8 @@ class VirtualDeviceContextBulkEditView(generic.BulkEditView):
     form = forms.VirtualDeviceContextBulkEditForm
 
 
+
 class VirtualDeviceContextBulkDeleteView(generic.BulkDeleteView):
     queryset = VirtualDeviceContext.objects.all()
     filterset = filtersets.VirtualDeviceContextFilterSet
     table = tables.VirtualDeviceContextTable
-
-
-class VirtualDeviceContextInterfacesView(DeviceComponentsView):
-    queryset = VirtualDeviceContext.objects.all()
-    child_model = Interface
-    table = tables.DeviceInterfaceTable
-    filterset = filtersets.InterfaceFilterSet
-
-    def get_children(self, request, parent):
-        return self.child_model.objects.restrict(request.user, 'view').filter(vdcs=parent)
