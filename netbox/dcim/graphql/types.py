@@ -502,7 +502,6 @@ class VirtualChassisType(NetBoxObjectType):
         filterset_class = filtersets.VirtualChassisFilterSet
 
 
-
 class VirtualDeviceContextType(NetBoxObjectType):
 
     class Meta:
