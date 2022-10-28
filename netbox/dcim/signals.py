@@ -127,13 +127,13 @@ def nullify_connected_endpoints(instance, **kwargs):
         cablepath.retrace()
 
 
-@receiver(m2m_changed, sender=Interface.vdc.through)
+@receiver(m2m_changed, sender=Interface.vdcs.through)
 def enforce_vdc_type_restrictions(instance, **kwargs):
     if 'action' == 'post_add':
         device = instance.device
         if device.device_type.vdc_type not in [VirtualDeviceContextTypeChoices.CISCO_ASA_CONTEXT, VirtualDeviceContextTypeChoices.CISCO_FTD_INSTANCE] \
-                and len(instance.vdc) > 1:
+                and len(instance.vdcs) > 1:
             print('Error')
             raise forms.ValidationError({
-                'vdc': f"You cannot assign more then 1 VDC for {device.device_type}"
+                'vdcs': f"You cannot assign more then 1 VDC for {device.device_type}"
             })

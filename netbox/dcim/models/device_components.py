@@ -531,7 +531,7 @@ class Interface(ModularComponentModel, BaseInterface, CabledObjectModel, PathEnd
         max_length=100,
         blank=True
     )
-    vdc = models.ManyToManyField(
+    vdcs = models.ManyToManyField(
         to='dcim.VirtualDeviceContext',
         related_name='interfaces'
     )

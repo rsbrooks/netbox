@@ -397,7 +397,7 @@ class DeviceTypeForm(NetBoxModelForm):
         model = DeviceType
         fields = [
             'manufacturer', 'model', 'slug', 'part_number', 'u_height', 'is_full_depth', 'subdevice_role', 'airflow',
-            'vdc_type', 'vdc_type', 'weight', 'weight_unit', 'front_image', 'rear_image', 'comments', 'tags',
+            'vdc_type', 'weight', 'weight_unit', 'front_image', 'rear_image', 'comments', 'tags',
         ]
         widgets = {
             'airflow': StaticSelect(),
@@ -1375,7 +1375,7 @@ class PowerOutletForm(ModularDeviceComponentForm):
 
 
 class InterfaceForm(InterfaceCommonForm, ModularDeviceComponentForm):
-    vdc = DynamicModelMultipleChoiceField(
+    vdcs = DynamicModelMultipleChoiceField(
         queryset=VirtualDeviceContext.objects.all(),
         required=False,
         label='Virtual Device Contexts',
@@ -1457,7 +1457,7 @@ class InterfaceForm(InterfaceCommonForm, ModularDeviceComponentForm):
     )
 
     fieldsets = (
-        ('Interface', ('device', 'module', 'vdc', 'name', 'label', 'type', 'speed', 'duplex', 'description', 'tags')),
+        ('Interface', ('device', 'module', 'vdcs', 'name', 'label', 'type', 'speed', 'duplex', 'description', 'tags')),
         ('Addressing', ('vrf', 'mac_address', 'wwn')),
         ('Operation', ('mtu', 'tx_power', 'enabled', 'mgmt_only', 'mark_connected')),
         ('Related Interfaces', ('parent', 'bridge', 'lag')),
@@ -1471,7 +1471,7 @@ class InterfaceForm(InterfaceCommonForm, ModularDeviceComponentForm):
     class Meta:
         model = Interface
         fields = [
-            'device', 'module', 'vdc', 'name', 'label', 'type', 'speed', 'duplex', 'enabled', 'parent', 'bridge', 'lag',
+            'device', 'module', 'vdcs', 'name', 'label', 'type', 'speed', 'duplex', 'enabled', 'parent', 'bridge', 'lag',
             'mac_address', 'wwn', 'mtu', 'mgmt_only', 'mark_connected', 'description', 'poe_mode', 'poe_type', 'mode',
             'rf_role', 'rf_channel', 'rf_channel_frequency', 'rf_channel_width', 'tx_power', 'wireless_lans',
             'untagged_vlan', 'tagged_vlans', 'vrf', 'tags',
@@ -1498,9 +1498,9 @@ class InterfaceForm(InterfaceCommonForm, ModularDeviceComponentForm):
     def clean_vdc(self):
         device = self.cleaned_data.get('device')
         if device.device_type.vdc_type not in [VirtualDeviceContextTypeChoices.CISCO_ASA_CONTEXT, VirtualDeviceContextTypeChoices.CISCO_FTD_INSTANCE]\
-                and len(self.cleaned_data.get('vdc')) > 1:
+                and len(self.cleaned_data.get('vdcs')) > 1:
             raise forms.ValidationError(f"You cannot assign more then 1 VDC for {device.device_type}")
-        return self.cleaned_data.get('vdc')
+        return self.cleaned_data.get('vdcs')
 
 
 class FrontPortForm(ModularDeviceComponentForm):

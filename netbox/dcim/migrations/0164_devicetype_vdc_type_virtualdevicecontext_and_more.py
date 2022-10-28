@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='interface',
-            name='vdc',
+            name='vdcs',
             field=models.ManyToManyField(related_name='interfaces', to='dcim.virtualdevicecontext'),
         ),
         migrations.AddConstraint(

@@ -124,16 +124,16 @@ class DeviceType(NetBoxModel, WeightMixin):
         help_text='Parent devices house child devices in device bays. Leave blank '
                   'if this device type is neither a parent nor a child.'
     )
+    airflow = models.CharField(
+        max_length=50,
+        choices=DeviceAirflowChoices,
+        blank=True
+    )
     vdc_type = models.CharField(
         max_length=50,
         blank=True,
         choices=VirtualDeviceContextTypeChoices,
         verbose_name='VDC Type'
-    )
-    airflow = models.CharField(
-        max_length=50,
-        choices=DeviceAirflowChoices,
-        blank=True
     )
     front_image = models.ImageField(
         upload_to='devicetype-images',
@@ -1217,3 +1217,7 @@ class VirtualDeviceContext(NetBoxModel):
             return self.primary_ip4
         else:
             return None
+
+    @property
+    def vdc_type(self):
+        return self.device.device_type.vdc_type

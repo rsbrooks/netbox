@@ -317,6 +317,7 @@ class DeviceTypeSerializer(NetBoxModelSerializer):
     )
     subdevice_role = ChoiceField(choices=SubdeviceRoleChoices, allow_blank=True, required=False)
     airflow = ChoiceField(choices=DeviceAirflowChoices, allow_blank=True, required=False)
+    vdc_type = ChoiceField(choices=VirtualDeviceContextTypeChoices, allow_blank=True, required=False)
     weight_unit = ChoiceField(choices=WeightUnitChoices, allow_blank=True, required=False)
     device_count = serializers.IntegerField(read_only=True)
 
@@ -324,8 +325,8 @@ class DeviceTypeSerializer(NetBoxModelSerializer):
         model = DeviceType
         fields = [
             'id', 'url', 'display', 'manufacturer', 'model', 'slug', 'part_number', 'u_height', 'is_full_depth',
-            'subdevice_role', 'airflow', 'weight', 'weight_unit', 'front_image', 'rear_image', 'comments', 'tags',
-            'custom_fields', 'created', 'last_updated', 'device_count',
+            'subdevice_role', 'vdc_type', 'airflow', 'weight', 'weight_unit', 'front_image', 'rear_image', 'comments',
+            'tags', 'custom_fields', 'created', 'last_updated', 'device_count',
         ]
 
 
@@ -840,6 +841,11 @@ class PowerPortSerializer(NetBoxModelSerializer, CabledObjectSerializer, Connect
 class InterfaceSerializer(NetBoxModelSerializer, CabledObjectSerializer, ConnectedEndpointsSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='dcim-api:interface-detail')
     device = NestedDeviceSerializer()
+    vdcs = NestedVirtualDeviceContextSerializer(
+        required=False,
+        allow_null=True,
+        many=True
+    )
     module = ComponentNestedModuleSerializer(
         required=False,
         allow_null=True
@@ -876,13 +882,13 @@ class InterfaceSerializer(NetBoxModelSerializer, CabledObjectSerializer, Connect
     class Meta:
         model = Interface
         fields = [
-            'id', 'url', 'display', 'device', 'module', 'name', 'label', 'type', 'enabled', 'parent', 'bridge', 'lag',
-            'mtu', 'mac_address', 'speed', 'duplex', 'wwn', 'mgmt_only', 'description', 'mode', 'rf_role', 'rf_channel',
-            'poe_mode', 'poe_type', 'rf_channel_frequency', 'rf_channel_width', 'tx_power', 'untagged_vlan',
-            'tagged_vlans', 'mark_connected', 'cable', 'cable_end', 'wireless_link', 'link_peers', 'link_peers_type',
-            'wireless_lans', 'vrf', 'l2vpn_termination', 'connected_endpoints', 'connected_endpoints_type',
-            'connected_endpoints_reachable', 'tags', 'custom_fields', 'created', 'last_updated', 'count_ipaddresses',
-            'count_fhrp_groups', '_occupied',
+            'id', 'url', 'display', 'device', 'vdcs', 'module', 'name', 'label', 'type', 'enabled', 'parent', 'bridge',
+             'lag', 'mtu', 'mac_address', 'speed', 'duplex', 'wwn', 'mgmt_only', 'description', 'mode', 'rf_role',
+            'rf_channel', 'poe_mode', 'poe_type', 'rf_channel_frequency', 'rf_channel_width', 'tx_power',
+            'untagged_vlan', 'tagged_vlans', 'mark_connected', 'cable', 'cable_end', 'wireless_link', 'link_peers',
+            'link_peers_type', 'wireless_lans', 'vrf', 'l2vpn_termination', 'connected_endpoints',
+            'connected_endpoints_type', 'connected_endpoints_reachable', 'tags', 'custom_fields', 'created',
+            'last_updated', 'count_ipaddresses', 'count_fhrp_groups', '_occupied',
         ]
 
     def validate(self, data):
