@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         ('extras', '0078_unique_constraints'),
         ('ipam', '0062_unique_constraints'),
         ('tenancy', '0008_unique_constraints'),
-        ('dcim', '0163_rack_devicetype_moduletype_weights'),
+        ('dcim', '0164_rack_mounting_depth'),
     ]
 
     operations = [
