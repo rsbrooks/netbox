@@ -1157,7 +1157,6 @@ class VirtualDeviceContext(NetBoxModel):
     identifier = models.PositiveSmallIntegerField(
         blank=True,
         null=True,
-        validators=[MaxValueValidator(255)]
     )
     primary_ip4 = models.OneToOneField(
         to='ipam.IPAddress',

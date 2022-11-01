@@ -133,7 +133,6 @@ def enforce_vdc_type_restrictions(instance, **kwargs):
         device = instance.device
         if device.device_type.vdc_type not in [VirtualDeviceContextTypeChoices.CISCO_ASA_CONTEXT, VirtualDeviceContextTypeChoices.CISCO_FTD_INSTANCE] \
                 and len(instance.vdcs) > 1:
-            print('Error')
             raise forms.ValidationError({
                 'vdcs': f"You cannot assign more then 1 VDC for {device.device_type}"
             })
