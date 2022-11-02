@@ -1367,6 +1367,23 @@ class InterfaceFilterSet(
         to_field_name='rd',
         label='VRF (RD)',
     )
+    vdc_id = django_filters.ModelMultipleChoiceFilter(
+        field_name='vdcs',
+        queryset=VirtualDeviceContext.objects.all(),
+        label='Virtual Device Context',
+    )
+    vdc_identifier = django_filters.ModelMultipleChoiceFilter(
+        field_name='vdcs__identifier',
+        queryset=VirtualDeviceContext.objects.all(),
+        to_field_name='identifier',
+        label='Virtual Device Context (Identifier)',
+    )
+    vdc = django_filters.ModelMultipleChoiceFilter(
+        field_name='vdcs__name',
+        queryset=VirtualDeviceContext.objects.all(),
+        to_field_name='name',
+        label='Virtual Device Context',
+    )
 
     class Meta:
         model = Interface

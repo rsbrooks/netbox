@@ -2441,6 +2441,14 @@ class InterfaceView(generic.ObjectView):
     queryset = Interface.objects.all()
 
     def get_extra_context(self, request, instance):
+        # Get assigned VDC's
+        vdc_table = tables.VirtualDeviceContextTable(
+            data=instance.vdcs.restrict(request.user, 'view').prefetch_related('device'),
+            exclude=('tenant', 'tenant_group', 'primary_ip', 'primary_ip4', 'primary_ip6', 'comments', 'tags',
+                     'created', 'last_updated', 'actions', ),
+            orderable=False
+        )
+
         # Get assigned IP addresses
         ipaddress_table = AssignedIPAddressesTable(
             data=instance.ip_addresses.restrict(request.user, 'view').prefetch_related('vrf', 'tenant'),
@@ -2478,6 +2486,7 @@ class InterfaceView(generic.ObjectView):
         )
 
         return {
+            'vdc_table': vdc_table,
             'ipaddress_table': ipaddress_table,
             'bridge_interfaces_table': bridge_interfaces_tables,
             'child_interfaces_table': child_interfaces_tables,
