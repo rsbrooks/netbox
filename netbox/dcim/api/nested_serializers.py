@@ -475,4 +475,4 @@ class NestedVirtualDeviceContextSerializer(WritableNestedSerializer):
 
     class Meta:
         model = models.VirtualDeviceContext
-        fields = ['id', 'url', 'display', 'name', 'identifier', 'device', 'vdc_type']
+        fields = ['id', 'url', 'display', 'name', 'identifier', 'device']

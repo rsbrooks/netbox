@@ -435,9 +435,6 @@ class DeviceTypeFilterSet(NetBoxModelFilterSet):
         to_field_name='slug',
         label='Manufacturer (slug)',
     )
-    vdc_type = django_filters.MultipleChoiceFilter(
-        choices=VirtualDeviceContextTypeChoices
-    )
     has_front_image = django_filters.BooleanFilter(
         label='Has a front image',
         method='_has_front_image'
@@ -486,7 +483,7 @@ class DeviceTypeFilterSet(NetBoxModelFilterSet):
     class Meta:
         model = DeviceType
         fields = [
-            'id', 'model', 'slug', 'part_number', 'u_height', 'is_full_depth', 'subdevice_role', 'airflow', 'weight', 'weight_unit', 'vdc_type',
+            'id', 'model', 'slug', 'part_number', 'u_height', 'is_full_depth', 'subdevice_role', 'airflow', 'weight', 'weight_unit',
         ]
 
     def search(self, queryset, name, value):

@@ -387,7 +387,7 @@ class DeviceTypeForm(NetBoxModelForm):
             'manufacturer', 'model', 'slug', 'part_number', 'tags',
         )),
         ('Chassis', (
-            'u_height', 'is_full_depth', 'subdevice_role', 'airflow', 'vdc_type'
+            'u_height', 'is_full_depth', 'subdevice_role', 'airflow',
         )),
         ('Attributes', ('weight', 'weight_unit')),
         ('Images', ('front_image', 'rear_image')),
@@ -397,7 +397,7 @@ class DeviceTypeForm(NetBoxModelForm):
         model = DeviceType
         fields = [
             'manufacturer', 'model', 'slug', 'part_number', 'u_height', 'is_full_depth', 'subdevice_role', 'airflow',
-            'vdc_type', 'weight', 'weight_unit', 'front_image', 'rear_image', 'comments', 'tags',
+            'weight', 'weight_unit', 'front_image', 'rear_image', 'comments', 'tags',
         ]
         widgets = {
             'airflow': StaticSelect(),
@@ -1494,13 +1494,6 @@ class InterfaceForm(InterfaceCommonForm, ModularDeviceComponentForm):
             'rf_channel_frequency': "Populated by selected channel (if set)",
             'rf_channel_width': "Populated by selected channel (if set)",
         }
-
-    def clean_vdc(self):
-        device = self.cleaned_data.get('device')
-        if device.device_type.vdc_type not in [VirtualDeviceContextTypeChoices.CISCO_ASA_CONTEXT, VirtualDeviceContextTypeChoices.CISCO_FTD_INSTANCE]\
-                and len(self.cleaned_data.get('vdcs')) > 1:
-            raise forms.ValidationError(f"You cannot assign more then 1 VDC for {device.device_type}")
-        return self.cleaned_data.get('vdcs')
 
 
 class FrontPortForm(ModularDeviceComponentForm):

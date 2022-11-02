@@ -373,7 +373,7 @@ class DeviceTypeFilterForm(NetBoxModelFilterSetForm):
     model = DeviceType
     fieldsets = (
         (None, ('q', 'tag')),
-        ('Hardware', ('manufacturer_id', 'part_number', 'subdevice_role', 'airflow', 'vdc_type')),
+        ('Hardware', ('manufacturer_id', 'part_number', 'subdevice_role', 'airflow')),
         ('Images', ('has_front_image', 'has_rear_image')),
         ('Components', (
             'console_ports', 'console_server_ports', 'power_ports', 'power_outlets', 'interfaces',
@@ -395,10 +395,6 @@ class DeviceTypeFilterForm(NetBoxModelFilterSetForm):
     )
     airflow = MultipleChoiceField(
         choices=add_blank_choice(DeviceAirflowChoices),
-        required=False
-    )
-    vdc_type = MultipleChoiceField(
-        choices=add_blank_choice(VirtualDeviceContextTypeChoices),
         required=False
     )
     has_front_image = forms.NullBooleanField(

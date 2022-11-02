@@ -317,7 +317,6 @@ class DeviceTypeSerializer(NetBoxModelSerializer):
     )
     subdevice_role = ChoiceField(choices=SubdeviceRoleChoices, allow_blank=True, required=False)
     airflow = ChoiceField(choices=DeviceAirflowChoices, allow_blank=True, required=False)
-    vdc_type = ChoiceField(choices=VirtualDeviceContextTypeChoices, allow_blank=True, required=False)
     weight_unit = ChoiceField(choices=WeightUnitChoices, allow_blank=True, required=False)
     device_count = serializers.IntegerField(read_only=True)
 
@@ -325,7 +324,7 @@ class DeviceTypeSerializer(NetBoxModelSerializer):
         model = DeviceType
         fields = [
             'id', 'url', 'display', 'manufacturer', 'model', 'slug', 'part_number', 'u_height', 'is_full_depth',
-            'subdevice_role', 'vdc_type', 'airflow', 'weight', 'weight_unit', 'front_image', 'rear_image', 'comments',
+            'subdevice_role', 'airflow', 'weight', 'weight_unit', 'front_image', 'rear_image', 'comments',
             'tags', 'custom_fields', 'created', 'last_updated', 'device_count',
         ]
 

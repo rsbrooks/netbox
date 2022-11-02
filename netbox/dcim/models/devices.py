@@ -129,12 +129,6 @@ class DeviceType(NetBoxModel, WeightMixin):
         choices=DeviceAirflowChoices,
         blank=True
     )
-    vdc_type = models.CharField(
-        max_length=50,
-        blank=True,
-        choices=VirtualDeviceContextTypeChoices,
-        verbose_name='VDC Type'
-    )
     front_image = models.ImageField(
         upload_to='devicetype-images',
         blank=True
@@ -148,7 +142,7 @@ class DeviceType(NetBoxModel, WeightMixin):
     )
 
     clone_fields = (
-        'manufacturer', 'u_height', 'is_full_depth', 'subdevice_role', 'airflow', 'weight', 'weight_unit', 'vdc_type'
+        'manufacturer', 'u_height', 'is_full_depth', 'subdevice_role', 'airflow', 'weight', 'weight_unit'
     )
 
     class Meta:
@@ -1216,7 +1210,3 @@ class VirtualDeviceContext(NetBoxModel):
             return self.primary_ip4
         else:
             return None
-
-    @property
-    def vdc_type(self):
-        return self.device.device_type.vdc_type
