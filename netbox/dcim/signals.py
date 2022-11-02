@@ -4,7 +4,7 @@ from django import forms
 from django.db.models.signals import post_save, post_delete, pre_delete, m2m_changed
 from django.dispatch import receiver
 
-from .choices import CableEndChoices, LinkStatusChoices, VirtualDeviceContextTypeChoices
+from .choices import CableEndChoices, LinkStatusChoices
 from .models import Cable, CablePath, CableTermination, Device, PathEndpoint, PowerPanel, Rack, Location, \
     VirtualChassis, VirtualDeviceContext, Interface
 from .models.cables import trace_paths
