@@ -21,6 +21,7 @@ class NetBoxFeatureSet(
     CustomLinksMixin,
     CustomValidationMixin,
     ExportTemplatesMixin,
+    JournalingMixin,
     TagsMixin,
     WebhooksMixin
 ):
@@ -55,7 +56,7 @@ class ChangeLoggedModel(ChangeLoggingMixin, CustomValidationMixin, models.Model)
         abstract = True
 
 
-class NetBoxModel(CloningMixin, JournalingMixin, NetBoxFeatureSet, models.Model):
+class NetBoxModel(CloningMixin, NetBoxFeatureSet, models.Model):
     """
     Primary models represent real objects within the infrastructure being modeled.
     """
@@ -79,6 +80,9 @@ class NestedGroupModel(NetBoxFeatureSet, MPTTModel):
         db_index=True
     )
     name = models.CharField(
+        max_length=100
+    )
+    slug = models.SlugField(
         max_length=100
     )
     description = models.CharField(
@@ -134,3 +138,6 @@ class OrganizationalModel(NetBoxFeatureSet, models.Model):
     class Meta:
         abstract = True
         ordering = ('name',)
+
+    def __str__(self):
+        return self.name
