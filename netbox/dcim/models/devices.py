@@ -12,6 +12,7 @@ from django.db.models import F, ProtectedError
 from django.db.models.functions import Lower
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext as _
 
 from dcim.choices import *
 from dcim.constants import *
@@ -102,7 +103,7 @@ class DeviceType(NetBoxModel, WeightMixin):
     part_number = models.CharField(
         max_length=50,
         blank=True,
-        help_text='Discrete part number (optional)'
+        help_text=_('Discrete part number (optional)')
     )
     u_height = models.DecimalField(
         max_digits=4,
@@ -113,15 +114,15 @@ class DeviceType(NetBoxModel, WeightMixin):
     is_full_depth = models.BooleanField(
         default=True,
         verbose_name='Is full depth',
-        help_text='Device consumes both front and rear rack faces'
+        help_text=_('Device consumes both front and rear rack faces')
     )
     subdevice_role = models.CharField(
         max_length=50,
         choices=SubdeviceRoleChoices,
         blank=True,
         verbose_name='Parent/child status',
-        help_text='Parent devices house child devices in device bays. Leave blank '
-                  'if this device type is neither a parent nor a child.'
+        help_text=_('Parent devices house child devices in device bays. Leave blank '
+                    'if this device type is neither a parent nor a child.')
     )
     airflow = models.CharField(
         max_length=50,
@@ -335,7 +336,7 @@ class ModuleType(NetBoxModel, WeightMixin):
     part_number = models.CharField(
         max_length=50,
         blank=True,
-        help_text='Discrete part number (optional)'
+        help_text=_('Discrete part number (optional)')
     )
     comments = models.TextField(
         blank=True
@@ -432,7 +433,7 @@ class DeviceRole(OrganizationalModel):
     vm_role = models.BooleanField(
         default=True,
         verbose_name='VM Role',
-        help_text='Virtual machines may be assigned to this role'
+        help_text=_('Virtual machines may be assigned to this role')
     )
     description = models.CharField(
         max_length=200,
@@ -469,19 +470,19 @@ class Platform(OrganizationalModel):
         related_name='platforms',
         blank=True,
         null=True,
-        help_text='Optionally limit this platform to devices of a certain manufacturer'
+        help_text=_('Optionally limit this platform to devices of a certain manufacturer')
     )
     napalm_driver = models.CharField(
         max_length=50,
         blank=True,
         verbose_name='NAPALM driver',
-        help_text='The name of the NAPALM driver to use when interacting with devices'
+        help_text=_('The name of the NAPALM driver to use when interacting with devices')
     )
     napalm_args = models.JSONField(
         blank=True,
         null=True,
         verbose_name='NAPALM arguments',
-        help_text='Additional arguments to pass when initiating the NAPALM driver (JSON format)'
+        help_text=_('Additional arguments to pass when initiating the NAPALM driver (JSON format)')
     )
     description = models.CharField(
         max_length=200,
@@ -556,7 +557,7 @@ class Device(NetBoxModel, ConfigContextModel):
         null=True,
         unique=True,
         verbose_name='Asset tag',
-        help_text='A unique tag used to identify this device'
+        help_text=_('A unique tag used to identify this device')
     )
     site = models.ForeignKey(
         to='dcim.Site',
@@ -584,7 +585,7 @@ class Device(NetBoxModel, ConfigContextModel):
         null=True,
         validators=[MinValueValidator(1), MaxValueValidator(99.5)],
         verbose_name='Position (U)',
-        help_text='The lowest-numbered unit occupied by the device'
+        help_text=_('The lowest-numbered unit occupied by the device')
     )
     face = models.CharField(
         max_length=50,
@@ -992,7 +993,7 @@ class Module(NetBoxModel, ConfigContextModel):
         null=True,
         unique=True,
         verbose_name='Asset tag',
-        help_text='A unique tag used to identify this device'
+        help_text=_('A unique tag used to identify this device')
     )
     comments = models.TextField(
         blank=True

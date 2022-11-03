@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.utils.translation import gettext as _
 
 from ipam.constants import *
 from netbox.models import NetBoxModel
@@ -26,7 +27,7 @@ class VRF(NetBoxModel):
         blank=True,
         null=True,
         verbose_name='Route distinguisher',
-        help_text='Unique route distinguisher (as defined in RFC 4364)'
+        help_text=_('Unique route distinguisher (as defined in RFC 4364)')
     )
     tenant = models.ForeignKey(
         to='tenancy.Tenant',
@@ -38,7 +39,7 @@ class VRF(NetBoxModel):
     enforce_unique = models.BooleanField(
         default=True,
         verbose_name='Enforce unique space',
-        help_text='Prevent duplicate prefixes/IP addresses within this VRF'
+        help_text=_('Prevent duplicate prefixes/IP addresses within this VRF')
     )
     description = models.CharField(
         max_length=200,
@@ -80,7 +81,7 @@ class RouteTarget(NetBoxModel):
     name = models.CharField(
         max_length=VRF_RD_MAX_LENGTH,  # Same format options as VRF RD (RFC 4360 section 4)
         unique=True,
-        help_text='Route target value (formatted in accordance with RFC 4360)'
+        help_text=_('Route target value (formatted in accordance with RFC 4360)')
     )
     description = models.CharField(
         max_length=200,

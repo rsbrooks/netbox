@@ -35,7 +35,7 @@ class WirelessLANFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     )
     ssid = forms.CharField(
         required=False,
-        label='SSID'
+        label=_('SSID')
     )
     group_id = DynamicModelMultipleChoiceField(
         queryset=WirelessLANGroup.objects.all(),
@@ -69,7 +69,7 @@ class WirelessLinkFilterForm(TenancyFilterForm, NetBoxModelFilterSetForm):
     )
     ssid = forms.CharField(
         required=False,
-        label='SSID'
+        label=_('SSID')
     )
     status = forms.ChoiceField(
         required=False,

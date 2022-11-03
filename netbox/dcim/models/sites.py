@@ -2,6 +2,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
+from django.utils.translation import gettext as _
 from mptt.models import TreeForeignKey
 from timezone_field import TimeZoneField
 
@@ -217,7 +218,7 @@ class Site(NetBoxModel):
     facility = models.CharField(
         max_length=50,
         blank=True,
-        help_text='Local facility ID or description'
+        help_text=_('Local facility ID or description')
     )
     asns = models.ManyToManyField(
         to='ipam.ASN',
@@ -244,14 +245,14 @@ class Site(NetBoxModel):
         decimal_places=6,
         blank=True,
         null=True,
-        help_text='GPS coordinate (latitude)'
+        help_text=_('GPS coordinate (latitude)')
     )
     longitude = models.DecimalField(
         max_digits=9,
         decimal_places=6,
         blank=True,
         null=True,
-        help_text='GPS coordinate (longitude)'
+        help_text=_('GPS coordinate (longitude)')
     )
     comments = models.TextField(
         blank=True

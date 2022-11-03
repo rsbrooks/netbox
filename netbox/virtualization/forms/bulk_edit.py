@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext as _
 
 from dcim.choices import InterfaceModeChoices
 from dcim.constants import INTERFACE_MTU_MAX, INTERFACE_MTU_MIN
@@ -86,7 +87,7 @@ class ClusterBulkEditForm(NetBoxModelBulkEditForm):
     )
     comments = CommentField(
         widget=SmallTextarea,
-        label='Comments'
+        label=_('Comments')
     )
 
     model = Cluster
@@ -143,19 +144,19 @@ class VirtualMachineBulkEditForm(NetBoxModelBulkEditForm):
     )
     vcpus = forms.IntegerField(
         required=False,
-        label='vCPUs'
+        label=_('vCPUs')
     )
     memory = forms.IntegerField(
         required=False,
-        label='Memory (MB)'
+        label=_('Memory (MB)')
     )
     disk = forms.IntegerField(
         required=False,
-        label='Disk (GB)'
+        label=_('Disk (GB)')
     )
     comments = CommentField(
         widget=SmallTextarea,
-        label='Comments'
+        label=_('Comments')
     )
 
     model = VirtualMachine
@@ -191,7 +192,7 @@ class VMInterfaceBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         min_value=INTERFACE_MTU_MIN,
         max_value=INTERFACE_MTU_MAX,
-        label='MTU'
+        label=_('MTU')
     )
     description = forms.CharField(
         max_length=100,
@@ -205,7 +206,7 @@ class VMInterfaceBulkEditForm(NetBoxModelBulkEditForm):
     vlan_group = DynamicModelChoiceField(
         queryset=VLANGroup.objects.all(),
         required=False,
-        label='VLAN group'
+        label=_('VLAN group')
     )
     untagged_vlan = DynamicModelChoiceField(
         queryset=VLAN.objects.all(),
@@ -213,7 +214,7 @@ class VMInterfaceBulkEditForm(NetBoxModelBulkEditForm):
         query_params={
             'group_id': '$vlan_group',
         },
-        label='Untagged VLAN'
+        label=_('Untagged VLAN')
     )
     tagged_vlans = DynamicModelMultipleChoiceField(
         queryset=VLAN.objects.all(),
@@ -221,12 +222,12 @@ class VMInterfaceBulkEditForm(NetBoxModelBulkEditForm):
         query_params={
             'group_id': '$vlan_group',
         },
-        label='Tagged VLANs'
+        label=_('Tagged VLANs')
     )
     vrf = DynamicModelChoiceField(
         queryset=VRF.objects.all(),
         required=False,
-        label='VRF'
+        label=_('VRF')
     )
 
     model = VMInterface

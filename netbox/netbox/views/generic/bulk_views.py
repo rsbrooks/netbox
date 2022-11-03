@@ -12,6 +12,7 @@ from django.forms import Form, ModelMultipleChoiceField, MultipleHiddenInput
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext as _
 from django_tables2.export import TableExport
 
 from extras.models import ExportTemplate, SavedFilter
@@ -303,7 +304,7 @@ class BulkImportView(GetReturnURLMixin, BaseMultiObjectView):
                 from_form=self.model_form
             )
             csv_file = CSVFileField(
-                label="CSV file",
+                label=_("CSV file"),
                 from_form=self.model_form,
                 required=False
             )
