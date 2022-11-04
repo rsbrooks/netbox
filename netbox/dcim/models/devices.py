@@ -18,7 +18,7 @@ from dcim.constants import *
 from extras.models import ConfigContextModel
 from extras.querysets import ConfigContextModelQuerySet
 from netbox.config import ConfigItem
-from netbox.models import OrganizationalModel, NetBoxModel
+from netbox.models import OrganizationalModel, PrimaryModel
 from utilities.choices import ColorChoices
 from utilities.fields import ColorField, NaturalOrderingField
 from .device_components import *
@@ -46,35 +46,16 @@ class Manufacturer(OrganizationalModel):
     """
     A Manufacturer represents a company which produces hardware devices; for example, Juniper or Dell.
     """
-    name = models.CharField(
-        max_length=100,
-        unique=True
-    )
-    slug = models.SlugField(
-        max_length=100,
-        unique=True
-    )
-    description = models.CharField(
-        max_length=200,
-        blank=True
-    )
-
     # Generic relations
     contacts = GenericRelation(
         to='tenancy.ContactAssignment'
     )
 
-    class Meta:
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
-
     def get_absolute_url(self):
         return reverse('dcim:manufacturer', args=[self.pk])
 
 
-class DeviceType(NetBoxModel, WeightMixin):
+class DeviceType(PrimaryModel, WeightMixin):
     """
     A DeviceType represents a particular make (Manufacturer) and model of device. It specifies rack height and depth, as
     well as high-level functional role(s).
@@ -135,9 +116,6 @@ class DeviceType(NetBoxModel, WeightMixin):
     )
     rear_image = models.ImageField(
         upload_to='devicetype-images',
-        blank=True
-    )
-    comments = models.TextField(
         blank=True
     )
 
@@ -318,7 +296,7 @@ class DeviceType(NetBoxModel, WeightMixin):
         return self.subdevice_role == SubdeviceRoleChoices.ROLE_CHILD
 
 
-class ModuleType(NetBoxModel, WeightMixin):
+class ModuleType(PrimaryModel, WeightMixin):
     """
     A ModuleType represents a hardware element that can be installed within a device and which houses additional
     components; for example, a line card within a chassis-based switch such as the Cisco Catalyst 6500. Like a
@@ -337,9 +315,6 @@ class ModuleType(NetBoxModel, WeightMixin):
         max_length=50,
         blank=True,
         help_text='Discrete part number (optional)'
-    )
-    comments = models.TextField(
-        blank=True
     )
 
     # Generic relations
@@ -419,14 +394,6 @@ class DeviceRole(OrganizationalModel):
     color to be used when displaying rack elevations. The vm_role field determines whether the role is applicable to
     virtual machines as well.
     """
-    name = models.CharField(
-        max_length=100,
-        unique=True
-    )
-    slug = models.SlugField(
-        max_length=100,
-        unique=True
-    )
     color = ColorField(
         default=ColorChoices.COLOR_GREY
     )
@@ -435,16 +402,6 @@ class DeviceRole(OrganizationalModel):
         verbose_name='VM Role',
         help_text='Virtual machines may be assigned to this role'
     )
-    description = models.CharField(
-        max_length=200,
-        blank=True,
-    )
-
-    class Meta:
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
 
     def get_absolute_url(self):
         return reverse('dcim:devicerole', args=[self.pk])
@@ -456,14 +413,6 @@ class Platform(OrganizationalModel):
     NetBox uses Platforms to determine how to interact with devices when pulling inventory data or other information by
     specifying a NAPALM driver.
     """
-    name = models.CharField(
-        max_length=100,
-        unique=True
-    )
-    slug = models.SlugField(
-        max_length=100,
-        unique=True
-    )
     manufacturer = models.ForeignKey(
         to='dcim.Manufacturer',
         on_delete=models.PROTECT,
@@ -484,22 +433,12 @@ class Platform(OrganizationalModel):
         verbose_name='NAPALM arguments',
         help_text='Additional arguments to pass when initiating the NAPALM driver (JSON format)'
     )
-    description = models.CharField(
-        max_length=200,
-        blank=True
-    )
-
-    class Meta:
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
 
     def get_absolute_url(self):
         return reverse('dcim:platform', args=[self.pk])
 
 
-class Device(NetBoxModel, ConfigContextModel):
+class Device(PrimaryModel, ConfigContextModel):
     """
     A Device represents a piece of physical hardware mounted within a Rack. Each Device is assigned a DeviceType,
     DeviceRole, and (optionally) a Platform. Device names are not required, however if one is set it must be unique.
@@ -642,9 +581,6 @@ class Device(NetBoxModel, ConfigContextModel):
         blank=True,
         null=True,
         validators=[MaxValueValidator(255)]
-    )
-    comments = models.TextField(
-        blank=True
     )
 
     # Generic relations
@@ -962,7 +898,7 @@ class Device(NetBoxModel, ConfigContextModel):
         return round(total_weight / 1000, 2)
 
 
-class Module(NetBoxModel, ConfigContextModel):
+class Module(PrimaryModel, ConfigContextModel):
     """
     A Module represents a field-installable component within a Device which may itself hold multiple device components
     (for example, a line card within a chassis switch). Modules are instantiated from ModuleTypes.
@@ -994,9 +930,6 @@ class Module(NetBoxModel, ConfigContextModel):
         unique=True,
         verbose_name='Asset tag',
         help_text='A unique tag used to identify this device'
-    )
-    comments = models.TextField(
-        blank=True
     )
 
     clone_fields = ('device', 'module_type')
@@ -1075,7 +1008,7 @@ class Module(NetBoxModel, ConfigContextModel):
 # Virtual chassis
 #
 
-class VirtualChassis(NetBoxModel):
+class VirtualChassis(PrimaryModel):
     """
     A collection of Devices which operate with a shared control plane (e.g. a switch stack).
     """
@@ -1132,7 +1065,7 @@ class VirtualChassis(NetBoxModel):
         return super().delete(*args, **kwargs)
 
 
-class VirtualDeviceContext(NetBoxModel):
+class VirtualDeviceContext(PrimaryModel):
     device = models.ForeignKey(
         to='Device',
         on_delete=models.PROTECT,

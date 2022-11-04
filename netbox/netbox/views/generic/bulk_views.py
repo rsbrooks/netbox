@@ -4,17 +4,17 @@ from copy import deepcopy
 
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import FieldDoesNotExist, ValidationError, ObjectDoesNotExist
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db import transaction, IntegrityError
 from django.db.models import ManyToManyField, ProtectedError
 from django.db.models.fields.reverse_related import ManyToManyRel
-from django.forms import Form, ModelMultipleChoiceField, MultipleHiddenInput, model_to_dict
+from django.forms import Form, ModelMultipleChoiceField, MultipleHiddenInput
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django_tables2.export import TableExport
 from django.utils.safestring import mark_safe
+from django_tables2.export import TableExport
 
-from extras.models import ExportTemplate
+from extras.models import ExportTemplate, SavedFilter
 from extras.signals import clear_webhooks
 from utilities.error_handlers import handle_protectederror
 from utilities.exceptions import AbortRequest, PermissionsViolation
@@ -126,7 +126,7 @@ class ObjectListView(BaseMultiObjectView, ActionsMixin, TableMixin):
         content_type = ContentType.objects.get_for_model(model)
 
         if self.filterset:
-            self.queryset = self.filterset(request.GET, self.queryset).qs
+            self.queryset = self.filterset(request.GET, self.queryset, request=request).qs
 
         # Determine the available actions
         actions = self.get_permitted_actions(request.user)
@@ -330,7 +330,6 @@ class BulkImportView(GetReturnURLMixin, BaseMultiObjectView):
         return headers, records
 
     def _update_objects(self, form, request, headers, records):
-        from utilities.forms import CSVModelChoiceField
         updated_objs = []
 
         ids = [int(record["id"]) for record in records]
@@ -544,7 +543,7 @@ class BulkEditView(GetReturnURLMixin, BaseMultiObjectView):
 
         # If we are editing *all* objects in the queryset, replace the PK list with all matched objects.
         if request.POST.get('_all') and self.filterset is not None:
-            pk_list = self.filterset(request.GET, self.queryset.values_list('pk', flat=True)).qs
+            pk_list = self.filterset(request.GET, self.queryset.values_list('pk', flat=True), request=request).qs
         else:
             pk_list = request.POST.getlist('pk')
 
@@ -741,7 +740,7 @@ class BulkDeleteView(GetReturnURLMixin, BaseMultiObjectView):
         if request.POST.get('_all'):
             qs = model.objects.all()
             if self.filterset is not None:
-                qs = self.filterset(request.GET, qs).qs
+                qs = self.filterset(request.GET, qs, request=request).qs
             pk_list = qs.only('pk').values_list('pk', flat=True)
         else:
             pk_list = [int(pk) for pk in request.POST.getlist('pk')]
@@ -828,7 +827,8 @@ class BulkComponentCreateView(GetReturnURLMixin, BaseMultiObjectView):
 
         # Are we editing *all* objects in the queryset or just a selected subset?
         if request.POST.get('_all') and self.filterset is not None:
-            pk_list = [obj.pk for obj in self.filterset(request.GET, self.parent_model.objects.only('pk')).qs]
+            queryset = self.filterset(request.GET, self.parent_model.objects.only('pk'), request=request).qs
+            pk_list = [obj.pk for obj in queryset]
         else:
             pk_list = [int(pk) for pk in request.POST.getlist('pk')]
 

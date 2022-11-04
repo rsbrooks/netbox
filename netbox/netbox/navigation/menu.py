@@ -1,4 +1,4 @@
-from extras.registry import registry
+from netbox.registry import registry
 from . import *
 
 
@@ -279,6 +279,7 @@ OTHER_MENU = Menu(
                 get_model_item('extras', 'customfield', 'Custom Fields'),
                 get_model_item('extras', 'customlink', 'Custom Links'),
                 get_model_item('extras', 'exporttemplate', 'Export Templates'),
+                get_model_item('extras', 'savedfilter', 'Saved Filters'),
             ),
         ),
         MenuGroup(

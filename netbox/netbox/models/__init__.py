@@ -10,8 +10,9 @@ from netbox.models.features import *
 __all__ = (
     'ChangeLoggedModel',
     'NestedGroupModel',
-    'OrganizationalModel',
     'NetBoxModel',
+    'OrganizationalModel',
+    'PrimaryModel',
 )
 
 
@@ -21,6 +22,7 @@ class NetBoxFeatureSet(
     CustomLinksMixin,
     CustomValidationMixin,
     ExportTemplatesMixin,
+    JournalingMixin,
     TagsMixin,
     WebhooksMixin
 ):
@@ -55,11 +57,27 @@ class ChangeLoggedModel(ChangeLoggingMixin, CustomValidationMixin, models.Model)
         abstract = True
 
 
-class NetBoxModel(CloningMixin, JournalingMixin, NetBoxFeatureSet, models.Model):
+class NetBoxModel(CloningMixin, NetBoxFeatureSet, models.Model):
+    """
+    Base model for most object types. Suitable for use by plugins.
+    """
+    objects = RestrictedQuerySet.as_manager()
+
+    class Meta:
+        abstract = True
+
+
+class PrimaryModel(NetBoxModel):
     """
     Primary models represent real objects within the infrastructure being modeled.
     """
-    objects = RestrictedQuerySet.as_manager()
+    description = models.CharField(
+        max_length=200,
+        blank=True
+    )
+    comments = models.TextField(
+        blank=True
+    )
 
     class Meta:
         abstract = True
@@ -79,6 +97,9 @@ class NestedGroupModel(NetBoxFeatureSet, MPTTModel):
         db_index=True
     )
     name = models.CharField(
+        max_length=100
+    )
+    slug = models.SlugField(
         max_length=100
     )
     description = models.CharField(
@@ -134,3 +155,6 @@ class OrganizationalModel(NetBoxFeatureSet, models.Model):
     class Meta:
         abstract = True
         ordering = ('name',)
+
+    def __str__(self):
+        return self.name
