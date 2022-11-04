@@ -588,3 +588,26 @@ class CableTestCase(TestCase):
         cable = Cable(a_terminations=[self.interface2], b_terminations=[wireless_interface])
         with self.assertRaises(ValidationError):
             cable.clean()
+
+class CableTestCase(TestCase):
+
+    def setUp(self):
+
+        site = Site.objects.create(name='Test Site 1', slug='test-site-1')
+        manufacturer = Manufacturer.objects.create(name='Test Manufacturer 1', slug='test-manufacturer-1')
+        devicetype = DeviceType.objects.create(
+            manufacturer=manufacturer, model='Test Device Type 1', slug='test-device-type-1'
+        )
+        devicerole = DeviceRole.objects.create(
+            name='Test Device Role 1', slug='test-device-role-1', color='ff0000'
+        )
+        self.device = Device.objects.create(
+            device_type=devicetype, device_role=devicerole, name='TestDevice1', site=site
+        )
+
+        self.vdc1 = VirtualDeviceContext.objects.create(device=self.device, name="VDC 1", identifier=1)
+        self.vdc2 = VirtualDeviceContext.objects.create(device=self.device, name="VDC 2", identifier=1)
+
+        self.interface1 = Interface.objects.create(device=self.device1, name='Eth1/1', type='10gbase-t')
+        self.interface2 = Interface.objects.create(device=self.device2, name='Eth1/2', vdc=self.vdc1, type='10gbase-t')
+        self.interface3 = Interface.objects.create(device=self.device2, name='Eth1/3', vdc=self.vdc2, type='10gbase-t')

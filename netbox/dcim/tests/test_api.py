@@ -2163,3 +2163,5 @@ class PowerFeedTest(APIViewTestCases.APIViewTestCase):
                 'type': REDUNDANT,
             },
         ]
+
+# TODO: VDC Test Cases

@@ -1033,6 +1033,20 @@ class VirtualDeviceContextFilterSet(NetBoxModelFilterSet, TenancyFilterSet):
         model = VirtualDeviceContext
         fields = ['id', 'device', 'name', ]
 
+    def search(self, queryset, name, value):
+        if not value.strip():
+            return queryset
+        return queryset.filter(
+            Q(name__icontains=value) |
+            Q(identifier=value.strip())
+        ).distinct()
+
+    def _has_primary_ip(self, queryset, name, value):
+        params = Q(primary_ip4__isnull=False) | Q(primary_ip6__isnull=False)
+        if value:
+            return queryset.filter(params)
+        return queryset.exclude(params)
+
 
 class ModuleFilterSet(NetBoxModelFilterSet):
     manufacturer_id = django_filters.ModelMultipleChoiceFilter(

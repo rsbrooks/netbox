@@ -3073,3 +3073,5 @@ class PowerFeedTestCase(ViewTestCases.PrimaryObjectViewTestCase):
 
         response = self.client.get(reverse('dcim:powerfeed_trace', kwargs={'pk': powerfeed.pk}))
         self.assertHttpStatus(response, 200)
+
+# TODO: VDC Test Cases

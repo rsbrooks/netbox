@@ -4253,5 +4253,104 @@ class PowerFeedTestCase(TestCase, ChangeLoggedFilterSetTests):
         params = {'connected': False}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
+class VirtualDeviceContextBaseTestCase(TestCase, ChangeLoggedFilterSetTests):
+    queryset = VirtualDeviceContext.objects.all()
+    filterset = InterfaceFilterSet
+
+    @classmethod
+    def setUpTestData(cls):
+
+        sites = (
+            Site(name='Site 1', slug='site-1'),
+            Site(name='Site 2', slug='site-2'),
+            Site(name='Site 3', slug='site-3'),
+        )
+        Site.objects.bulk_create(sites)
+
+        locations = (
+            Location(name='Location 1', site=sites[0], slug='location-1'),
+            Location(name='Location 2', site=sites[1], slug='location-1'),
+            Location(name='Location 3', site=sites[2], slug='location-1'),
+        )
+        for location in locations:
+            location.save()
+
+        racks = (
+            Rack(name='Rack 1', site=sites[0], location=locations[0]),
+            Rack(name='Rack 2', site=sites[1], location=locations[1]),
+            Rack(name='Rack 3', site=sites[2], location=locations[2]),
+        )
+        Rack.objects.bulk_create(racks)
+
+        tenants = (
+            Tenant(name='Tenant 1', slug='tenant-1'),
+            Tenant(name='Tenant 2', slug='tenant-2'),
+            Tenant(name='Tenant 3', slug='tenant-3'),
+        )
+        Tenant.objects.bulk_create(tenants)
+
+        manufacturer = Manufacturer.objects.create(name='Manufacturer 1', slug='manufacturer-1')
+        device_type = DeviceType.objects.create(manufacturer=manufacturer, model='Model 1', slug='model-1')
+        device_role = DeviceRole.objects.create(name='Device Role 1', slug='device-role-1')
+
+        devices = (
+            Device(name='Device 1', device_type=device_type, device_role=device_role, site=sites[0], rack=racks[0], location=locations[0], position=1),
+            Device(name='Device 2', device_type=device_type, device_role=device_role, site=sites[1], rack=racks[1], location=locations[1], position=1),
+            Device(name='Device 3', device_type=device_type, device_role=device_role, site=sites[2], rack=racks[2], location=locations[2], position=1),
+        )
+        Device.objects.bulk_create(devices)
+
+        vdcs = (
+            VirtualDeviceContext(device=devices[0], name='VDC 1', identifier=1, status=VirtualDeviceContextStatusChoices.STATUS_ACTIVE),
+            VirtualDeviceContext(device=devices[0], name='VDC 2', identifier=2, status=VirtualDeviceContextStatusChoices.STATUS_PLANNED),
+            VirtualDeviceContext(device=devices[1], name='VDC 1', status=VirtualDeviceContextStatusChoices.STATUS_OFFLINE),
+            VirtualDeviceContext(device=devices[1], name='VDC 2', status=VirtualDeviceContextStatusChoices.STATUS_PLANNED),
+            VirtualDeviceContext(device=devices[2], name='VDC 1', status=VirtualDeviceContextStatusChoices.STATUS_ACTIVE),
+            VirtualDeviceContext(device=devices[2], name='VDC 2', status=VirtualDeviceContextStatusChoices.STATUS_ACTIVE),
+        )
+        VirtualDeviceContext.objects.bulk_create(vdcs)
+
+        interfaces = (
+            Interface(device=devices[0], vdc=vdcs[0], name='Interface 1', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[0], vdc=vdcs[1], name='Interface 2', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[1], vdc=vdcs[2], name='Interface 3', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[1], vdc=vdcs[3], name='Interface 4', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[2], vdc=vdcs[4], name='Interface 5', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[2], vdc=vdcs[5], name='Interface 6', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[0], vdc=vdcs[0], name='Interface 7', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[0], vdc=vdcs[1], name='Interface 8', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[1], vdc=vdcs[2], name='Interface 9', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[1], vdc=vdcs[3], name='Interface 10', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[2], vdc=vdcs[4], name='Interface 11', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[2], vdc=vdcs[5], name='Interface 12', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+        )
+        Interface.objects.bulk_create(interfaces)
+
+
+class VirtualDeviceContextTestCase(VirtualDeviceContextBaseTestCase):
+
+    def test_device(self):
+        params = {'device': ['Device 1', 'Device 2']}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 4)
+
+    def test_status(self):
+        params = {'status': ['active']}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
+
+
+class VirtualDeviceContextInterfaceTestCase(VirtualDeviceContextBaseTestCase):
+    def test_vdc(self):
+        devices = Device.objects.first()
+        vdc = VirtualDeviceContext.objects.filter(device=devices)
+        params = {'vdc': ['VDC 1']}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 6)
+        params = {'vdc_id': vdc.values_list('pk')}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 4)
+
+    def test_vdc_identifier(self):
+        devices = Device.objects.first()
+        vdc = VirtualDeviceContext.objects.filter(device=devices)
+        params = {'vdc_identifier': vdc.values_list('identifier')}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 4)
 
 # TODO: Connection filters
