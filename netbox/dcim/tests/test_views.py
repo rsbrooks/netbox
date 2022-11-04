@@ -3078,3 +3078,87 @@ class PowerFeedTestCase(ViewTestCases.PrimaryObjectViewTestCase):
         self.assertHttpStatus(response, 200)
 
 # TODO: VDC Test Cases
+
+
+class VirtualDeviceContextTestCase(ViewTestCases.PrimaryObjectViewTestCase):
+    model = VirtualDeviceContext
+
+    @classmethod
+    def setUpTestData(cls):
+
+        sites = (
+            Site(name='Site 1', slug='site-1'),
+            Site(name='Site 2', slug='site-2'),
+        )
+        Site.objects.bulk_create(sites)
+
+        location = Location(site=sites[0], name='Location 1', slug='location-1')
+        location.save()
+
+        racks = (
+            Rack(name='Rack 1', site=sites[0], location=location),
+            Rack(name='Rack 2', site=sites[1]),
+        )
+        Rack.objects.bulk_create(racks)
+
+        manufacturer = Manufacturer.objects.create(name='Manufacturer 1', slug='manufacturer-1')
+
+        devicetypes = (
+            DeviceType(model='Device Type 1', slug='device-type-1', manufacturer=manufacturer),
+            DeviceType(model='Device Type 2', slug='device-type-2', manufacturer=manufacturer),
+        )
+        DeviceType.objects.bulk_create(devicetypes)
+
+        deviceroles = (
+            DeviceRole(name='Device Role 1', slug='device-role-1'),
+            DeviceRole(name='Device Role 2', slug='device-role-2'),
+        )
+        DeviceRole.objects.bulk_create(deviceroles)
+
+        platforms = (
+            Platform(name='Platform 1', slug='platform-1'),
+            Platform(name='Platform 2', slug='platform-2'),
+        )
+        Platform.objects.bulk_create(platforms)
+
+        devices = (
+            Device(name='Device 1', site=sites[0], rack=racks[0], device_type=devicetypes[0], device_role=deviceroles[0], platform=platforms[0]),
+        )
+        Device.objects.bulk_create(devices)
+
+        vdcs = (
+            VirtualDeviceContext(name='VDC 1', identifier=1, device=devices[0], status='active'),
+            VirtualDeviceContext(name='VDC 2', identifier=2, device=devices[0], status='active'),
+            VirtualDeviceContext(name='VDC 3', identifier=3, device=devices[0], status='active'),
+        )
+        VirtualDeviceContext.objects.bulk_create(vdcs)
+
+        tags = create_tags('Alpha', 'Bravo', 'Charlie')
+
+        cls.form_data = {
+            'device': devices[0].pk,
+            'status': 'active',
+            'name': 'VDC 4',
+            'identifier': 4,
+            'primary_ip4': None,
+            'primary_ip6': None,
+            'tags': [t.pk for t in tags],
+        }
+
+        cls.csv_data = (
+            "device,status,name,identifier",
+            "Device 1,active,VDC 5,5",
+            "Device 1,active,VDC 6,6",
+            "Device 1,active,VDC 7,7",
+        )
+
+        cls.csv_update_data = (
+            "id,status",
+            f"{vdcs[0].pk},{VirtualDeviceContextStatusChoices.STATUS_PLANNED}",
+            f"{vdcs[1].pk},{VirtualDeviceContextStatusChoices.STATUS_PLANNED}",
+            f"{vdcs[2].pk},{VirtualDeviceContextStatusChoices.STATUS_PLANNED}",
+        )
+
+        cls.bulk_edit_data = {
+            'status': VirtualDeviceContextStatusChoices.STATUS_OFFLINE,
+        }

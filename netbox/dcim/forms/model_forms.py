@@ -1707,7 +1707,8 @@ class VirtualDeviceContextForm(TenancyForm, NetBoxModelForm):
         model = VirtualDeviceContext
         fields = [
             'region', 'site_group', 'site', 'location', 'rack',
-            'device', 'name', 'status', 'identifier', 'primary_ip4', 'primary_ip6', 'tenant_group', 'tenant', 'comments'
+            'device', 'name', 'status', 'identifier', 'primary_ip4', 'primary_ip6', 'tenant_group', 'tenant',
+            'comments', 'tags'
         ]
         help_texts = {}
         widgets = {

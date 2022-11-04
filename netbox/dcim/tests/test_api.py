@@ -1485,6 +1485,12 @@ class InterfaceTest(Mixins.ComponentTraceMixin, APIViewTestCases.APIViewTestCase
         )
         Interface.objects.bulk_create(interfaces)
 
+        vdcs = (
+            VirtualDeviceContext(name='VDC 1', identifier=1, device=device),
+            VirtualDeviceContext(name='VDC 2', identifier=2, device=device)
+        )
+        VirtualDeviceContext.objects.bulk_create(vdcs)
+
         vlans = (
             VLAN(name='VLAN 1', vid=1),
             VLAN(name='VLAN 2', vid=2),
@@ -1533,6 +1539,7 @@ class InterfaceTest(Mixins.ComponentTraceMixin, APIViewTestCases.APIViewTestCase
             },
             {
                 'device': device.pk,
+                'vdcs': vdcs[0].pk,
                 'name': 'Interface 6',
                 'type': 'virtual',
                 'mode': InterfaceModeChoices.MODE_TAGGED,
@@ -1543,6 +1550,7 @@ class InterfaceTest(Mixins.ComponentTraceMixin, APIViewTestCases.APIViewTestCase
             },
             {
                 'device': device.pk,
+                'vdcs': vdcs[1].pk,
                 'name': 'Interface 7',
                 'type': InterfaceTypeChoices.TYPE_80211A,
                 'tx_power': 10,
@@ -1551,6 +1559,7 @@ class InterfaceTest(Mixins.ComponentTraceMixin, APIViewTestCases.APIViewTestCase
             },
             {
                 'device': device.pk,
+                'vdcs': vdcs[1].pk,
                 'name': 'Interface 8',
                 'type': InterfaceTypeChoices.TYPE_80211A,
                 'tx_power': 10,
@@ -2164,4 +2173,10 @@ class PowerFeedTest(APIViewTestCases.APIViewTestCase):
             },
         ]
 
-# TODO: VDC Test Cases
+
+class VirtualDeviceContextTest(APIViewTestCases.APIViewTestCase):
+    model = VirtualDeviceContext
+    brief_fields = ['display', 'id', 'name', 'url', 'identifier', 'device']
+    bulk_update_data = {
+        'status': 'planned',
+    }

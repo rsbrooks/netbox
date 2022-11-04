@@ -589,6 +589,7 @@ class CableTestCase(TestCase):
         with self.assertRaises(ValidationError):
             cable.clean()
 
+
 class CableTestCase(TestCase):
 
     def setUp(self):
@@ -609,5 +610,8 @@ class CableTestCase(TestCase):
         self.vdc2 = VirtualDeviceContext.objects.create(device=self.device, name="VDC 2", identifier=1)
 
         self.interface1 = Interface.objects.create(device=self.device1, name='Eth1/1', type='10gbase-t')
-        self.interface2 = Interface.objects.create(device=self.device2, name='Eth1/2', vdc=self.vdc1, type='10gbase-t')
-        self.interface3 = Interface.objects.create(device=self.device2, name='Eth1/3', vdc=self.vdc2, type='10gbase-t')
+        self.interface2 = Interface.objects.create(device=self.device2, name='Eth1/2', type='10gbase-t')
+        self.interface3 = Interface.objects.create(device=self.device2, name='Eth1/3', type='10gbase-t')
+
+        self.interface2.vdcs.set([self.vdc1])
+        self.interface3.vdcs.set([self.vdc2])

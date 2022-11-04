@@ -4253,9 +4253,8 @@ class PowerFeedTestCase(TestCase, ChangeLoggedFilterSetTests):
         params = {'connected': False}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
-class VirtualDeviceContextBaseTestCase(TestCase, ChangeLoggedFilterSetTests):
-    queryset = VirtualDeviceContext.objects.all()
-    filterset = InterfaceFilterSet
+
+class VirtualDeviceContextBaseTestCase:
 
     @classmethod
     def setUpTestData(cls):
@@ -4311,46 +4310,65 @@ class VirtualDeviceContextBaseTestCase(TestCase, ChangeLoggedFilterSetTests):
         VirtualDeviceContext.objects.bulk_create(vdcs)
 
         interfaces = (
-            Interface(device=devices[0], vdc=vdcs[0], name='Interface 1', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
-            Interface(device=devices[0], vdc=vdcs[1], name='Interface 2', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
-            Interface(device=devices[1], vdc=vdcs[2], name='Interface 3', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
-            Interface(device=devices[1], vdc=vdcs[3], name='Interface 4', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
-            Interface(device=devices[2], vdc=vdcs[4], name='Interface 5', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
-            Interface(device=devices[2], vdc=vdcs[5], name='Interface 6', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
-            Interface(device=devices[0], vdc=vdcs[0], name='Interface 7', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
-            Interface(device=devices[0], vdc=vdcs[1], name='Interface 8', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
-            Interface(device=devices[1], vdc=vdcs[2], name='Interface 9', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
-            Interface(device=devices[1], vdc=vdcs[3], name='Interface 10', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
-            Interface(device=devices[2], vdc=vdcs[4], name='Interface 11', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
-            Interface(device=devices[2], vdc=vdcs[5], name='Interface 12', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[0], name='Interface 1', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[0], name='Interface 2', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[1], name='Interface 3', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[1], name='Interface 4', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[2], name='Interface 5', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[2], name='Interface 6', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[0], name='Interface 7', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[0], name='Interface 8', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[1], name='Interface 9', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[1], name='Interface 10', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[2], name='Interface 11', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
+            Interface(device=devices[2], name='Interface 12', type=InterfaceTypeChoices.TYPE_1GE_FIXED),
         )
         Interface.objects.bulk_create(interfaces)
 
+        interfaces[0].vdcs.set([vdcs[0], vdcs[1]])
+        interfaces[1].vdcs.set([vdcs[0], vdcs[1]])
+        interfaces[2].vdcs.set([vdcs[2], vdcs[3]])
+        interfaces[3].vdcs.set([vdcs[2], vdcs[3]])
+        interfaces[4].vdcs.set([vdcs[4], vdcs[5]])
+        interfaces[5].vdcs.set([vdcs[4], vdcs[5]])
+        interfaces[6].vdcs.set([vdcs[0]])
+        interfaces[7].vdcs.set([vdcs[1]])
+        interfaces[8].vdcs.set([vdcs[2]])
+        interfaces[9].vdcs.set([vdcs[3]])
+        interfaces[10].vdcs.set([vdcs[4]])
+        interfaces[11].vdcs.set([vdcs[5]])
 
-class VirtualDeviceContextTestCase(VirtualDeviceContextBaseTestCase):
+
+class VirtualDeviceContextTestCase(VirtualDeviceContextBaseTestCase, TestCase, ChangeLoggedFilterSetTests):
+    queryset = VirtualDeviceContext.objects.all()
+    filterset = VirtualDeviceContextFilterSet
 
     def test_device(self):
         params = {'device': ['Device 1', 'Device 2']}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 4)
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 6)
 
     def test_status(self):
         params = {'status': ['active']}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
 
-class VirtualDeviceContextInterfaceTestCase(VirtualDeviceContextBaseTestCase):
+class VirtualDeviceContextInterfaceTestCase(VirtualDeviceContextBaseTestCase, TestCase, ChangeLoggedFilterSetTests):
+    queryset = Interface.objects.all()
+    filterset = InterfaceFilterSet
+
     def test_vdc(self):
+        params = {'vdc': ['VDC 1']}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 9)
+
         devices = Device.objects.first()
         vdc = VirtualDeviceContext.objects.filter(device=devices)
-        params = {'vdc': ['VDC 1']}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 6)
-        params = {'vdc_id': vdc.values_list('pk')}
+        params = {'vdc_id': vdc.values_list('pk', flat=True)}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 4)
 
     def test_vdc_identifier(self):
         devices = Device.objects.first()
         vdc = VirtualDeviceContext.objects.filter(device=devices)
-        params = {'vdc_identifier': vdc.values_list('identifier')}
+        params = {'vdc_identifier': vdc.values_list('identifier', flat=True)}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 4)
 
 # TODO: Connection filters
