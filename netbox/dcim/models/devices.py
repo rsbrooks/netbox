@@ -1065,7 +1065,7 @@ class VirtualChassis(PrimaryModel):
         return super().delete(*args, **kwargs)
 
 
-class VirtualDeviceContext(NetBoxModel):
+class VirtualDeviceContext(PrimaryModel):
     device = models.ForeignKey(
         to='Device',
         on_delete=models.PROTECT,
