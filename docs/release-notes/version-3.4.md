@@ -28,6 +28,8 @@ A new `PluginMenu` class has been introduced, which enables a plugin to inject a
 
 * [#8245](https://github.com/netbox-community/netbox/issues/8245) - Enable GraphQL filtering of related objects
 * [#8274](https://github.com/netbox-community/netbox/issues/8274) - Enable associating a custom link with multiple object types
+* [#8485](https://github.com/netbox-community/netbox/issues/8485) - Enable journaling for all organizational models
+* [#8853](https://github.com/netbox-community/netbox/issues/8853) - Introduce the `ALLOW_TOKEN_RETRIEVAL` config parameter to restrict the display of API tokens
 * [#9249](https://github.com/netbox-community/netbox/issues/9249) - Device and virtual machine names are no longer case-sensitive
 * [#9478](https://github.com/netbox-community/netbox/issues/9478) - Add `link_peers` field to GraphQL types for cabled objects
 * [#9654](https://github.com/netbox-community/netbox/issues/9654) - Add `weight` field to racks, device types, and module types
@@ -37,6 +39,7 @@ A new `PluginMenu` class has been introduced, which enables a plugin to inject a
 * [#10348](https://github.com/netbox-community/netbox/issues/10348) - Add decimal custom field type
 * [#10556](https://github.com/netbox-community/netbox/issues/10556) - Include a `display` field in all GraphQL object types
 * [#10595](https://github.com/netbox-community/netbox/issues/10595) - Add GraphQL relationships for additional generic foreign key fields
+* [#10698](https://github.com/netbox-community/netbox/issues/10698) - Omit app label from content type in table columns
 * [#10761](https://github.com/netbox-community/netbox/issues/10761) - Enable associating an export template with multiple object types
 * [#10781](https://github.com/netbox-community/netbox/issues/10781) - Add support for Python v3.11
 
@@ -48,6 +51,7 @@ A new `PluginMenu` class has been introduced, which enables a plugin to inject a
 * [#9880](https://github.com/netbox-community/netbox/issues/9880) - Introduce `django_apps` plugin configuration parameter
 * [#9887](https://github.com/netbox-community/netbox/issues/9887) - Inspect `docs_url` property to determine link to model documentation
 * [#10314](https://github.com/netbox-community/netbox/issues/10314) - Move `clone()` method from NetBoxModel to CloningMixin
+* [#10543](https://github.com/netbox-community/netbox/issues/10543) - Introduce `get_plugin_config()` utility function
 * [#10739](https://github.com/netbox-community/netbox/issues/10739) - Introduce `get_queryset()` method on generic views
 
 ### Other Changes
@@ -55,24 +59,79 @@ A new `PluginMenu` class has been introduced, which enables a plugin to inject a
 * [#9045](https://github.com/netbox-community/netbox/issues/9045) - Remove legacy ASN field from provider model
 * [#9046](https://github.com/netbox-community/netbox/issues/9046) - Remove legacy contact fields from provider model
 * [#10358](https://github.com/netbox-community/netbox/issues/10358) - Raise minimum required PostgreSQL version from 10 to 11
+* [#10697](https://github.com/netbox-community/netbox/issues/10697) - Move application registry into core app
 * [#10699](https://github.com/netbox-community/netbox/issues/10699) - Remove custom `import_object()` function
+* [#10816](https://github.com/netbox-community/netbox/issues/10816) - Pass the current request when instantiating a FilterSet within UI views
+* [#10820](https://github.com/netbox-community/netbox/issues/10820) - Switch timezone library from pytz to zoneinfo
+* [#10821](https://github.com/netbox-community/netbox/issues/10821) - Enable data localization
 
 ### REST API Changes
 
 * circuits.provider
     * Removed the `asn`, `noc_contact`, `admin_contact`, and `portal_url` fields
+    * Added a `description` field
+* dcim.Cable
+    * Added `description` and `comments` fields
+* dcim.Device
+    * Added a `description` field
 * dcim.DeviceType
+    * Added a `description` field
     * Added optional `weight` and `weight_unit` fields
+* dcim.Module
+    * Added a `description` field
 * dcim.ModuleType
+    * Added a `description` field
     * Added optional `weight` and `weight_unit` fields
+* dcim.PowerFeed
+    * Added a `description` field
+* dcim.PowerPanel
+    * Added `description` and `comments` fields
 * dcim.Rack
+    * Added a `description` field
     * Added optional `weight` and `weight_unit` fields
+* dcim.RackReservation
+    * Added a `comments` field
+* dcim.VirtualChassis
+    * Added `description` and `comments` fields
 * extras.CustomLink
     * Renamed `content_type` field to `content_types`
 * extras.ExportTemplate
     * Renamed `content_type` field to `content_types`
+* ipam.Aggregate
+    * Added a `comments` field
+* ipam.ASN
+    * Added a `comments` field
 * ipam.FHRPGroup
+    * Added a `comments` field
     * Added optional `name` field
+* ipam.IPAddress
+    * Added a `comments` field
+* ipam.IPRange
+    * Added a `comments` field
+* ipam.L2VPN
+    * Added a `comments` field
+* ipam.Prefix
+    * Added a `comments` field
+* ipam.RouteTarget
+    * Added a `comments` field
+* ipam.Service
+    * Added a `comments` field
+* ipam.ServiceTemplate
+    * Added a `comments` field
+* ipam.VLAN
+    * Added a `comments` field
+* ipam.VRF
+    * Added a `comments` field
+* tenancy.Contact
+    * Added a `description` field
+* virtualization.Cluster
+    * Added a `description` field
+* virtualization.VirtualMachine
+    * Added a `description` field
+* wireless.WirelessLAN
+    * Added a `comments` field
+* wireless.WirelessLink
+    * Added a `comments` field
 
 ### GraphQL API Changes
 

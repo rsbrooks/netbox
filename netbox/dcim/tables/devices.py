@@ -1,22 +1,5 @@
 import django_tables2 as tables
-from dcim.models import (
-    ConsolePort,
-    ConsoleServerPort,
-    Device,
-    DeviceBay,
-    DeviceRole,
-    FrontPort,
-    Interface,
-    InventoryItem,
-    InventoryItemRole,
-    ModuleBay,
-    Platform,
-    PowerOutlet,
-    PowerPort,
-    RearPort,
-    VirtualChassis,
-    VirtualDeviceContext,
-)
+from dcim import models
 from django_tables2.utils import Accessor
 from tenancy.tables import ContactsColumnMixin, TenancyColumnsMixin
 
@@ -108,7 +91,7 @@ class DeviceRoleTable(NetBoxTable):
     )
 
     class Meta(NetBoxTable.Meta):
-        model = DeviceRole
+        model = models.DeviceRole
         fields = (
             'pk', 'id', 'name', 'device_count', 'vm_count', 'color', 'vm_role', 'description', 'slug', 'tags',
             'actions', 'created', 'last_updated',
@@ -139,7 +122,7 @@ class PlatformTable(NetBoxTable):
     )
 
     class Meta(NetBoxTable.Meta):
-        model = Platform
+        model = models.Platform
         fields = (
             'pk', 'id', 'name', 'manufacturer', 'device_count', 'vm_count', 'slug', 'napalm_driver', 'napalm_args',
             'description', 'tags', 'actions', 'created', 'last_updated',
@@ -222,12 +205,12 @@ class DeviceTable(TenancyColumnsMixin, ContactsColumnMixin, NetBoxTable):
     )
 
     class Meta(NetBoxTable.Meta):
-        model = Device
+        model = models.Device
         fields = (
             'pk', 'id', 'name', 'status', 'tenant', 'tenant_group', 'device_role', 'manufacturer', 'device_type',
             'platform', 'serial', 'asset_tag', 'region', 'site_group', 'site', 'location', 'rack', 'position', 'face',
             'airflow', 'primary_ip', 'primary_ip4', 'primary_ip6', 'cluster', 'virtual_chassis', 'vc_position',
-            'vc_priority', 'comments', 'contacts', 'tags', 'created', 'last_updated',
+            'vc_priority', 'description', 'comments', 'contacts', 'tags', 'created', 'last_updated',
         )
         default_columns = (
             'pk', 'name', 'status', 'tenant', 'site', 'location', 'rack', 'device_role', 'manufacturer', 'device_type',
@@ -254,7 +237,7 @@ class DeviceImportTable(TenancyColumnsMixin, NetBoxTable):
     )
 
     class Meta(NetBoxTable.Meta):
-        model = Device
+        model = models.Device
         fields = ('id', 'name', 'status', 'tenant', 'tenant_group', 'site', 'rack', 'position', 'device_role', 'device_type')
         empty_text = False
 
@@ -328,7 +311,7 @@ class ConsolePortTable(ModularDeviceComponentTable, PathEndpointTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = ConsolePort
+        model = models.ConsolePort
         fields = (
             'pk', 'id', 'name', 'device', 'module_bay', 'module', 'label', 'type', 'speed', 'description',
             'mark_connected', 'cable', 'cable_color', 'link_peer', 'connection', 'tags', 'created', 'last_updated',
@@ -347,7 +330,7 @@ class DeviceConsolePortTable(ConsolePortTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = ConsolePort
+        model = models.ConsolePort
         fields = (
             'pk', 'id', 'name', 'module_bay', 'module', 'label', 'type', 'speed', 'description', 'mark_connected',
             'cable', 'cable_color', 'link_peer', 'connection', 'tags', 'actions'
@@ -370,7 +353,7 @@ class ConsoleServerPortTable(ModularDeviceComponentTable, PathEndpointTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = ConsoleServerPort
+        model = models.ConsoleServerPort
         fields = (
             'pk', 'id', 'name', 'device', 'module_bay', 'module', 'label', 'type', 'speed', 'description',
             'mark_connected', 'cable', 'cable_color', 'link_peer', 'connection', 'tags', 'created', 'last_updated',
@@ -390,7 +373,7 @@ class DeviceConsoleServerPortTable(ConsoleServerPortTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = ConsoleServerPort
+        model = models.ConsoleServerPort
         fields = (
             'pk', 'id', 'name', 'module_bay', 'module', 'label', 'type', 'speed', 'description', 'mark_connected',
             'cable', 'cable_color', 'link_peer', 'connection', 'tags', 'actions',
@@ -413,7 +396,7 @@ class PowerPortTable(ModularDeviceComponentTable, PathEndpointTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = PowerPort
+        model = models.PowerPort
         fields = (
             'pk', 'id', 'name', 'device', 'module_bay', 'module', 'label', 'type', 'description', 'mark_connected',
             'maximum_draw', 'allocated_draw', 'cable', 'cable_color', 'link_peer', 'connection', 'tags', 'created',
@@ -434,7 +417,7 @@ class DevicePowerPortTable(PowerPortTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = PowerPort
+        model = models.PowerPort
         fields = (
             'pk', 'id', 'name', 'module_bay', 'module', 'label', 'type', 'maximum_draw', 'allocated_draw',
             'description', 'mark_connected', 'cable', 'cable_color', 'link_peer', 'connection', 'tags', 'actions',
@@ -462,7 +445,7 @@ class PowerOutletTable(ModularDeviceComponentTable, PathEndpointTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = PowerOutlet
+        model = models.PowerOutlet
         fields = (
             'pk', 'id', 'name', 'device', 'module_bay', 'module', 'label', 'type', 'description', 'power_port',
             'feed_leg', 'mark_connected', 'cable', 'cable_color', 'link_peer', 'connection', 'tags', 'created',
@@ -482,7 +465,7 @@ class DevicePowerOutletTable(PowerOutletTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = PowerOutlet
+        model = models.PowerOutlet
         fields = (
             'pk', 'id', 'name', 'module_bay', 'module', 'label', 'type', 'power_port', 'feed_leg', 'description',
             'mark_connected', 'cable', 'cable_color', 'link_peer', 'connection', 'tags', 'actions',
@@ -546,7 +529,7 @@ class InterfaceTable(ModularDeviceComponentTable, BaseInterfaceTable, PathEndpoi
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = Interface
+        model = models.Interface
         fields = (
             'pk', 'id', 'name', 'device', 'module_bay', 'module', 'label', 'enabled', 'type', 'mgmt_only', 'mtu',
             'speed', 'duplex', 'mode', 'mac_address', 'wwn', 'poe_mode', 'poe_type', 'rf_role', 'rf_channel',
@@ -580,7 +563,7 @@ class DeviceInterfaceTable(InterfaceTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = Interface
+        model = models.Interface
         fields = (
             'pk', 'id', 'name', 'module_bay', 'module', 'label', 'enabled', 'type', 'parent', 'bridge', 'lag',
             'mgmt_only', 'mtu', 'mode', 'mac_address', 'wwn', 'rf_role', 'rf_channel', 'rf_channel_frequency',
@@ -619,7 +602,7 @@ class FrontPortTable(ModularDeviceComponentTable, CableTerminationTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = FrontPort
+        model = models.FrontPort
         fields = (
             'pk', 'id', 'name', 'device', 'module_bay', 'module', 'label', 'type', 'color', 'rear_port',
             'rear_port_position', 'description', 'mark_connected', 'cable', 'cable_color', 'link_peer', 'tags',
@@ -642,7 +625,7 @@ class DeviceFrontPortTable(FrontPortTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = FrontPort
+        model = models.FrontPort
         fields = (
             'pk', 'id', 'name', 'module_bay', 'module', 'label', 'type', 'rear_port', 'rear_port_position',
             'description', 'mark_connected', 'cable', 'cable_color', 'link_peer', 'tags', 'actions',
@@ -668,7 +651,7 @@ class RearPortTable(ModularDeviceComponentTable, CableTerminationTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = RearPort
+        model = models.RearPort
         fields = (
             'pk', 'id', 'name', 'device', 'module_bay', 'module', 'label', 'type', 'color', 'positions', 'description',
             'mark_connected', 'cable', 'cable_color', 'link_peer', 'tags', 'created', 'last_updated',
@@ -688,7 +671,7 @@ class DeviceRearPortTable(RearPortTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = RearPort
+        model = models.RearPort
         fields = (
             'pk', 'id', 'name', 'module_bay', 'module', 'label', 'type', 'positions', 'description', 'mark_connected',
             'cable', 'cable_color', 'link_peer', 'tags', 'actions',
@@ -729,7 +712,7 @@ class DeviceBayTable(DeviceComponentTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = DeviceBay
+        model = models.DeviceBay
         fields = (
             'pk', 'id', 'name', 'device', 'label', 'status', 'device_role', 'device_type', 'installed_device', 'description', 'tags',
             'created', 'last_updated',
@@ -750,7 +733,7 @@ class DeviceDeviceBayTable(DeviceBayTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = DeviceBay
+        model = models.DeviceBay
         fields = (
             'pk', 'id', 'name', 'label', 'status', 'installed_device', 'description', 'tags', 'actions',
         )
@@ -779,7 +762,7 @@ class ModuleBayTable(DeviceComponentTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = ModuleBay
+        model = models.ModuleBay
         fields = (
             'pk', 'id', 'name', 'device', 'label', 'position', 'installed_module', 'module_serial', 'module_asset_tag',
             'description', 'tags',
@@ -793,7 +776,7 @@ class DeviceModuleBayTable(ModuleBayTable):
     )
 
     class Meta(DeviceComponentTable.Meta):
-        model = ModuleBay
+        model = models.ModuleBay
         fields = (
             'pk', 'id', 'name', 'label', 'position', 'installed_module', 'module_serial', 'module_asset_tag',
             'description', 'tags', 'actions',
@@ -823,7 +806,7 @@ class InventoryItemTable(DeviceComponentTable):
     cable = None  # Override DeviceComponentTable
 
     class Meta(NetBoxTable.Meta):
-        model = InventoryItem
+        model = models.InventoryItem
         fields = (
             'pk', 'id', 'name', 'device', 'component', 'label', 'role', 'manufacturer', 'part_id', 'serial',
             'asset_tag', 'description', 'discovered', 'tags', 'created', 'last_updated',
@@ -842,7 +825,7 @@ class DeviceInventoryItemTable(InventoryItemTable):
     )
 
     class Meta(NetBoxTable.Meta):
-        model = InventoryItem
+        model = models.InventoryItem
         fields = (
             'pk', 'id', 'name', 'label', 'role', 'manufacturer', 'part_id', 'serial', 'asset_tag', 'component',
             'description', 'discovered', 'tags', 'actions',
@@ -867,7 +850,7 @@ class InventoryItemRoleTable(NetBoxTable):
     )
 
     class Meta(NetBoxTable.Meta):
-        model = InventoryItemRole
+        model = models.InventoryItemRole
         fields = (
             'pk', 'id', 'name', 'inventoryitem_count', 'color', 'description', 'slug', 'tags', 'actions',
         )
@@ -890,13 +873,17 @@ class VirtualChassisTable(NetBoxTable):
         url_params={'virtual_chassis_id': 'pk'},
         verbose_name='Members'
     )
+    comments = columns.MarkdownColumn()
     tags = columns.TagColumn(
         url_name='dcim:virtualchassis_list'
     )
 
     class Meta(NetBoxTable.Meta):
-        model = VirtualChassis
-        fields = ('pk', 'id', 'name', 'domain', 'master', 'member_count', 'tags', 'created', 'last_updated',)
+        model = models.VirtualChassis
+        fields = (
+            'pk', 'id', 'name', 'domain', 'master', 'member_count', 'description', 'comments', 'tags', 'created',
+            'last_updated',
+        )
         default_columns = ('pk', 'name', 'domain', 'master', 'member_count')
 
 
@@ -931,7 +918,7 @@ class VirtualDeviceContextTable(TenancyColumnsMixin, NetBoxTable):
     )
 
     class Meta(NetBoxTable.Meta):
-        model = VirtualDeviceContext
+        model = models.VirtualDeviceContext
         fields = (
             'pk', 'id', 'name', 'identifier', 'tenant', 'tenant_group',
             'primary_ip', 'primary_ip4', 'primary_ip6', 'comments', 'tags', 'created', 'last_updated',

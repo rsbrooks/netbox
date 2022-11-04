@@ -9,9 +9,9 @@ from django.db.models.signals import post_delete, post_save
 from django.utils.module_loading import import_string
 
 from extras.models import CachedValue, CustomField
-from extras.registry import registry
+from netbox.registry import registry
 from utilities.querysets import RestrictedPrefetch
-from utilities.templatetags.builtins.filters import bettertitle
+from utilities.utils import title
 from . import FieldTypes, LookupTypes, get_indexer
 
 DEFAULT_LOOKUP_TYPE = LookupTypes.PARTIAL
@@ -34,8 +34,7 @@ class SearchBackend:
             # Organize choices by category
             categories = defaultdict(dict)
             for label, idx in registry['search'].items():
-                title = bettertitle(idx.model._meta.verbose_name)
-                categories[idx.get_category()][label] = title
+                categories[idx.get_category()][label] = title(idx.model._meta.verbose_name)
 
             # Compile a nested tuple of choices for form rendering
             results = (
