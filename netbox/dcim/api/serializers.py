@@ -839,9 +839,10 @@ class PowerPortSerializer(NetBoxModelSerializer, CabledObjectSerializer, Connect
 class InterfaceSerializer(NetBoxModelSerializer, CabledObjectSerializer, ConnectedEndpointsSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='dcim-api:interface-detail')
     device = NestedDeviceSerializer()
-    vdcs = NestedVirtualDeviceContextSerializer(
+    vdcs = SerializedPKRelatedField(
+        queryset=VirtualDeviceContext.objects.all(),
+        serializer=NestedVirtualDeviceContextSerializer,
         required=False,
-        allow_null=True,
         many=True
     )
     module = ComponentNestedModuleSerializer(
