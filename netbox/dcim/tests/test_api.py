@@ -1539,7 +1539,7 @@ class InterfaceTest(Mixins.ComponentTraceMixin, APIViewTestCases.APIViewTestCase
             },
             {
                 'device': device.pk,
-                'vdcs': vdcs[0].pk,
+                'vdcs': [vdcs[0].pk],
                 'name': 'Interface 6',
                 'type': 'virtual',
                 'mode': InterfaceModeChoices.MODE_TAGGED,
@@ -1550,7 +1550,7 @@ class InterfaceTest(Mixins.ComponentTraceMixin, APIViewTestCases.APIViewTestCase
             },
             {
                 'device': device.pk,
-                'vdcs': vdcs[1].pk,
+                'vdcs': [vdcs[1].pk],
                 'name': 'Interface 7',
                 'type': InterfaceTypeChoices.TYPE_80211A,
                 'tx_power': 10,
@@ -1559,7 +1559,7 @@ class InterfaceTest(Mixins.ComponentTraceMixin, APIViewTestCases.APIViewTestCase
             },
             {
                 'device': device.pk,
-                'vdcs': vdcs[1].pk,
+                'vdcs': [vdcs[1].pk],
                 'name': 'Interface 8',
                 'type': InterfaceTypeChoices.TYPE_80211A,
                 'tx_power': 10,
