@@ -2180,3 +2180,36 @@ class VirtualDeviceContextTest(APIViewTestCases.APIViewTestCase):
     bulk_update_data = {
         'status': 'planned',
     }
+
+    def setUpTestData(cls):
+        site = Site.objects.create(name='Test Site', slug='test-site')
+        manufacturer = Manufacturer.objects.create(name='Manufacturer 1', slug='manufacturer-1')
+        devicetype = DeviceType.objects.create(manufacturer=manufacturer, model='Device Type', slug='device-type')
+        devicerole = DeviceRole.objects.create(name='Device Role', slug='device-role', color='ff0000')
+
+        devices = (
+            Device(name='Device 1', device_type=devicetype, device_role=devicerole, site=site),
+            Device(name='Device 2', device_type=devicetype, device_role=devicerole, site=site),
+        )
+        Device.objects.bulk_create(devices)
+
+        cls.create_data = [
+            {
+                'device': devices[0].pk,
+                'status': 'active',
+                'name': 'VDC 1',
+                'identifier': '1',
+            },
+            {
+                'device': devices[0].pk,
+                'status': 'active',
+                'name': 'VDC 2',
+                'identifier': '2',
+            },
+            {
+                'device': devices[1].pk,
+                'status': 'active',
+                'name': 'VDC 1',
+                'identifier': '1',
+            },
+        ]
