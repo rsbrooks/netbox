@@ -2181,6 +2181,7 @@ class VirtualDeviceContextTest(APIViewTestCases.APIViewTestCase):
         'status': 'planned',
     }
 
+    @classmethod
     def setUpTestData(cls):
         site = Site.objects.create(name='Test Site', slug='test-site')
         manufacturer = Manufacturer.objects.create(name='Manufacturer 1', slug='manufacturer-1')
