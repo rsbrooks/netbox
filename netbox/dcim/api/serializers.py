@@ -682,8 +682,8 @@ class VirtualDeviceContextSerializer(NetBoxModelSerializer):
     class Meta:
         model = VirtualDeviceContext
         fields = [
-            'id', 'url', 'display', 'name', 'device', 'tenant', 'primary_ip', 'primary_ip4', 'primary_ip6', 'comments',
-            'tags', 'custom_fields', 'created', 'last_updated',
+            'id', 'url', 'display', 'name', 'device', 'identifier', 'tenant', 'primary_ip', 'primary_ip4',
+            'primary_ip6', 'status', 'comments', 'tags', 'custom_fields', 'created', 'last_updated',
         ]
 
 

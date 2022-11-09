@@ -2176,7 +2176,7 @@ class PowerFeedTest(APIViewTestCases.APIViewTestCase):
 
 class VirtualDeviceContextTest(APIViewTestCases.APIViewTestCase):
     model = VirtualDeviceContext
-    brief_fields = ['display', 'id', 'name', 'url', 'identifier', 'device']
+    brief_fields = ['device', 'display', 'id', 'identifier', 'name', 'url']
     bulk_update_data = {
         'status': 'planned',
     }
@@ -2191,26 +2191,38 @@ class VirtualDeviceContextTest(APIViewTestCases.APIViewTestCase):
         devices = (
             Device(name='Device 1', device_type=devicetype, device_role=devicerole, site=site),
             Device(name='Device 2', device_type=devicetype, device_role=devicerole, site=site),
+            Device(name='Device 3', device_type=devicetype, device_role=devicerole, site=site),
         )
         Device.objects.bulk_create(devices)
+
+        vdcs = (
+            VirtualDeviceContext(device=devices[1], name='VDC 1', identifier=1, status='active'),
+            VirtualDeviceContext(device=devices[1], name='VDC 2', identifier=2, status='active'),
+            VirtualDeviceContext(device=devices[2], name='VDC 1', identifier=1, status='active'),
+            VirtualDeviceContext(device=devices[2], name='VDC 2', identifier=2, status='active'),
+            VirtualDeviceContext(device=devices[2], name='VDC 3', identifier=3, status='active'),
+            VirtualDeviceContext(device=devices[2], name='VDC 4', identifier=4, status='active'),
+            VirtualDeviceContext(device=devices[2], name='VDC 5', identifier=5, status='active'),
+        )
+        VirtualDeviceContext.objects.bulk_create(vdcs)
 
         cls.create_data = [
             {
                 'device': devices[0].pk,
                 'status': 'active',
                 'name': 'VDC 1',
-                'identifier': '1',
+                'identifier': 1,
             },
             {
                 'device': devices[0].pk,
                 'status': 'active',
                 'name': 'VDC 2',
-                'identifier': '2',
+                'identifier': 2,
             },
             {
                 'device': devices[1].pk,
                 'status': 'active',
-                'name': 'VDC 1',
-                'identifier': '1',
+                'name': 'VDC 3',
+                'identifier': 3,
             },
         ]
