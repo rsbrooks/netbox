@@ -21,6 +21,11 @@ sudo cp -v /opt/netbox/contrib/*.service /etc/systemd/system/
 sudo systemctl daemon-reload
 ```
 
+!!! note
+
+    If the default user you created was not 'netbox', you will need to update both of these .service files in the systemd directory with the correct User and Group. Otherwise, the services will fail to start in the following steps and will throw a user credntials error in the journalctl logs.
+    
+
 Then, start the `netbox` and `netbox-rq` services and enable them to initiate at boot time:
 
 ```no-highlight
