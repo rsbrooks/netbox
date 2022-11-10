@@ -302,5 +302,7 @@ Next, connect to the name or IP of the server (as defined in `ALLOWED_HOSTS`) on
 
 !!! warning
     If the test service does not run, or you cannot reach the NetBox home page, something has gone wrong. Do not proceed with the rest of this guide until the installation has been corrected.
+    
+    If you receive errors regarding missing modules/packages, be sure that you still have the virtual environment activated.
 
 Type `Ctrl+c` to stop the development server.
